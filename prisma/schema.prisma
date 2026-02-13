@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Team {
+  id             String           @id @default(cuid())
+  name           String           @unique
+  slug           String           @unique
+  sport          String
+  city           String           @default("Seattle")
+  active         Boolean          @default(true)
+  colorPrimary   String           @default("#1a1a2e")
+  colorSecondary String           @default("#16213e")
+  articles       Article[]
+  metrics        Metric[]
+  digests        DigestSnapshot[]
+  createdAt      DateTime         @default(now())
+}
+
+model Source {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  type        String
+  url         String?
+  reputation  Int       @default(50)
+  enabled     Boolean   @default(true)
+  lastFetchAt DateTime?
+  lastError   String?
+  fetchCount  Int       @default(0)
+  errorCount  Int       @default(0)
+  articles    Article[]
+  config      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Article {
+  id            String     @id @default(cuid())
+  title         String
+  url           String     @unique
+  urlHash       String     @unique
+  publisher     String
+  publishedAt   DateTime
+  fetchedAt     DateTime   @default(now())
+  summary       String?
+  content       String?
+  imageUrl      String?
+  sentiment     Float?
+  analysisDepth Float      @default(0)
+  articleType   String     @default("news")
+  sport         String
+  isHighlight   Boolean    @default(false)
+  videoUrl      String?
+  clickCount    Int        @default(0)
+  bookmarkCount Int        @default(0)
+  rankScore     Float      @default(0)
+  teamId        String
+  team          Team       @relation(fields: [teamId], references: [id])
+  sourceId      String
+  source        Source     @relation(fields: [sourceId], references: [id])
+  tags          Tag[]
+  bookmarks     Bookmark[]
+  createdAt     DateTime   @default(now())
+
+  @@index([sport, publishedAt])
+  @@index([teamId, publishedAt])
+  @@index([rankScore])
+  @@index([articleType])
+}
+
+model Tag {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  slug     String    @unique
+  articles Article[]
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  articleId String
+  article   Article  @relation(fields: [articleId], references: [id])
+  userId    String   @default("default")
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@unique([articleId, userId])
+}
+
+model DigestSnapshot {
+  id        String   @id @default(cuid())
+  date      String
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+
+  @@unique([date, teamId])
+}
+
+model ImportedDataset {
+  id         String   @id @default(cuid())
+  name       String
+  sport      String
+  dataType   String
+  season     String?
+  fileName   String
+  rowCount   Int      @default(0)
+  columnMap  String?
+  importedAt DateTime @default(now())
+  metrics    Metric[]
+}
+
+model Metric {
+  id          String           @id @default(cuid())
+  name        String
+  value       Float
+  stringValue String?
+  category    String
+  season      String?
+  playerName  String?
+  teamId      String
+  team        Team             @relation(fields: [teamId], references: [id])
+  datasetId   String?
+  dataset     ImportedDataset? @relation(fields: [datasetId], references: [id])
+  metadata    String?
+  date        DateTime?
+  createdAt   DateTime         @default(now())
+
+  @@index([teamId, category])
+  @@index([playerName])
+}
+
+model GameSchedule {
+  id         String   @id @default(cuid())
+  sport      String
+  teamSlug   String
+  opponent   String
+  gameDate   DateTime
+  isHome     Boolean  @default(true)
+  venue      String?
+  status     String   @default("scheduled")
+  homeScore  Int?
+  awayScore  Int?
+  summary    String?
+  externalId String?  @unique
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+
+  @@index([teamSlug, gameDate])
+  @@index([sport, gameDate])
+}
+
+model StatNugget {
+  id        String   @id @default(cuid())
+  sport     String
+  teamSlug  String
+  title     String
+  body      String
+  category  String
+  date      String
+  metadata  String?
+  createdAt DateTime @default(now())
+
+  @@unique([teamSlug, date])
+}
