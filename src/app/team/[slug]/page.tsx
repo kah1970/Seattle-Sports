@@ -9,7 +9,7 @@ import { createMLBScoresAdapter } from "@/lib/sources/mlb-scores-adapter";
 import { getDailyStatNugget } from "@/lib/analytics/stat-nuggets";
 import { notFound } from "next/navigation";
 import { TeamPageClient } from "./team-client";
-import { fetchTeamStats, fetchTodaysGame, fetchDivisionStandings, fetchSeahawksSeasonSummary, StatsResponse } from "@/lib/stats";
+import { fetchTeamStats, fetchTodaysGame, fetchDivisionStandings, fetchSeahawksSeasonSummary, fetchCougarsSeasonSummary, StatsResponse } from "@/lib/stats";
 
 export const dynamic = "force-dynamic";
 
@@ -86,7 +86,13 @@ export default async function TeamPage({
     // Live schedule so the sidebar agrees with the Next Game panel even
     // before the cron job has stored anything.
     mlbTeamId ? createMLBScoresAdapter().fetchScores!() : Promise.resolve([]),
-    params.slug === "seahawks" ? fetchSeahawksSeasonSummary() : Promise.resolve(null),
+    // ESPN season summary drives the header for the Seahawks and the Cougars
+    // (both non-MLB); MLB teams use `pulse` instead.
+    params.slug === "seahawks"
+      ? fetchSeahawksSeasonSummary()
+      : params.slug === "cougars"
+        ? fetchCougarsSeasonSummary()
+        : Promise.resolve(null),
   ]);
 
   const articles = recentArticles

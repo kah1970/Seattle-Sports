@@ -21,6 +21,9 @@ const ESPN_STANDINGS_API = "https://site.api.espn.com/apis/v2/sports";
 
 const MARINERS_MLB_ID = 136;
 const SEAHAWKS_ESPN_ID = 26;
+// WSU Cougars — same ESPN id for college football and men's college basketball.
+const COUGARS_ESPN_ID = 265;
+const ESPN_CFB = "football/college-football";
 // NBA expansion — track Seattle's bid coverage via league-level NBA ESPN id
 const NBA_ESPN_ID = 41; // OKC Thunder (placeholder for Sonics expansion tracking)
 
@@ -28,6 +31,8 @@ const NBA_ESPN_ID = 41; // OKC Thunder (placeholder for Sonics expansion trackin
 // (a January playoff game still belongs to the previous year's season).
 const CURRENT_MLB_SEASON = Number(currentMlbSeason());
 const CURRENT_NFL_SEASON = currentNflSeason();
+// College football rolls over on the same late-August/September schedule as the NFL.
+const CURRENT_CFB_SEASON = currentNflSeason();
 
 // ── Type Definitions ───────────────────────────────────────────────────────
 
@@ -218,6 +223,22 @@ export async function fetchSeahawksSeasonSummary(): Promise<NflSeasonSummary | n
     }
 }
 
+/**
+ * Live WSU Cougars football record for the header; null if ESPN is unreachable.
+ * Uses the same ESPN team endpoint + parser as the Seahawks.
+ */
+export async function fetchCougarsSeasonSummary(): Promise<NflSeasonSummary | null> {
+    try {
+        const res = await fetch(`${ESPN_API}/${ESPN_CFB}/teams/${COUGARS_ESPN_ID}`, {
+            next: { revalidate: 1800 },
+        });
+        if (!res.ok) return null;
+        return parseEspnSeasonSummary(await res.json(), CURRENT_CFB_SEASON);
+    } catch {
+        return null;
+    }
+}
+
 // ── NBA — SuperSonics expansion tracking ──────────────────────────────────
 
 export async function fetchSonicsExpansionNews(): Promise<{ headline: string; summary: string; link?: string }[]> {
@@ -327,6 +348,7 @@ export interface TodaysGameData {
 export async function fetchTodaysGame(teamSlug: string): Promise<TodaysGameData | null> {
     if (teamSlug === "mariners") return fetchTodaysGameMLB();
     if (teamSlug === "seahawks") return fetchTodaysGameESPN("football/nfl", SEAHAWKS_ESPN_ID, "seahawks");
+    if (teamSlug === "cougars") return fetchTodaysGameESPN(ESPN_CFB, COUGARS_ESPN_ID, "cougars", CURRENT_CFB_SEASON);
     return null;
 }
 
@@ -391,7 +413,7 @@ async function fetchTodaysGameMLB(): Promise<TodaysGameData | null> {
     };
 }
 
-async function fetchTodaysGameESPN(sport: string, teamId: number, teamSlug: string): Promise<TodaysGameData | null> {
+async function fetchTodaysGameESPN(sport: string, teamId: number, teamSlug: string, season: number = CURRENT_NFL_SEASON): Promise<TodaysGameData | null> {
     const today = new Date().toISOString().split("T")[0].replace(/-/g, "");
     // Check today's scoreboard
     const url = `${ESPN_API}/${sport}/scoreboard?dates=${today}`;
@@ -413,7 +435,7 @@ async function fetchTodaysGameESPN(sport: string, teamId: number, teamSlug: stri
 
     // If no game today, try to get next from schedule
     if (!event) {
-        const schedUrl = `${ESPN_API}/${sport}/teams/${teamId}/schedule?season=${CURRENT_NFL_SEASON}`;
+        const schedUrl = `${ESPN_API}/${sport}/teams/${teamId}/schedule?season=${season}`;
         const schedRes = await fetch(schedUrl, { next: { revalidate: 3600 } });
         if (!schedRes.ok) return null;
         const schedData = await schedRes.json();

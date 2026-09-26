@@ -5,13 +5,13 @@ import { computeRankScore } from "@/lib/ranking";
 import { TEAMS, TEAM_API_IDS } from "@/lib/config";
 import { fetchSeasonPulse } from "@/lib/sources/mlb-season-pulse";
 import { ordinal, pulseNugget, shortDivision } from "@/lib/analytics/season-pulse";
-import { fetchSeahawksSeasonSummary, fetchTodaysGame } from "@/lib/stats";
+import { fetchSeahawksSeasonSummary, fetchCougarsSeasonSummary, fetchTodaysGame } from "@/lib/stats";
 import { describeGame, TeamStatus } from "@/lib/team-status";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [recentArticles, poolNuggets, pulse, nflSummary, marinersGame, seahawksGame] =
+  const [recentArticles, poolNuggets, pulse, nflSummary, cougarsSummary, marinersGame, seahawksGame, cougarsGame] =
     await Promise.all([
       // Rank recent articles against today (stored rankScore is frozen at
       // ingestion time, so old stories would never drop).
@@ -28,8 +28,10 @@ export default async function HomePage() {
       Promise.resolve(getAllDailyNuggets()),
       fetchSeasonPulse(TEAM_API_IDS.mariners.mlbId!),
       fetchSeahawksSeasonSummary(),
+      fetchCougarsSeasonSummary(),
       fetchTodaysGame("mariners").catch(() => null),
       fetchTodaysGame("seahawks").catch(() => null),
+      fetchTodaysGame("cougars").catch(() => null),
     ]);
 
   const articles = recentArticles
@@ -90,12 +92,13 @@ export default async function HomePage() {
       name: cougars.name,
       logo: "/logo-cougars.png",
       colorSecondary: cougars.colorSecondary,
-      headline: cougars.season2025.finish,
-      label: "",
-      status: `${cougars.season2025.label}: ${cougars.season2025.record}`,
+      // Live football record + standing from ESPN; config is the fallback.
+      headline: cougarsSummary?.record ?? cougars.season2025.finish,
+      label: cougarsSummary ? String(cougarsSummary.season) : "",
+      status: cougarsSummary?.standing ?? `${cougars.season2025.label}: ${cougars.season2025.record}`,
       tone: null,
       badge: null,
-      next: null,
+      next: describeGame(cougarsGame),
     },
   ];
 

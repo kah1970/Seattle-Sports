@@ -88,7 +88,9 @@ export const TEAM_API_IDS: Record<string, { mlbId?: number; espnId?: number; esp
   mariners: { mlbId: 136, division: "AL West", leagueId: 103 },
   seahawks: { espnId: 26, espnSport: "football/nfl", division: "NFC West" },
   supersonics: { espnId: 41, espnSport: "basketball/nba", division: "Pacific" },
-  cougars: { division: "Pac-12" },
+  // ESPN id 265 is Washington State for both college football and men's
+  // college basketball; espnSport points at the in-season sport (football).
+  cougars: { espnId: 265, espnSport: "football/college-football", division: "Pac-12" },
 };
 
 export const SPORTS = ["MLB", "NFL", "NBA", "NCAA"] as const;
@@ -161,6 +163,16 @@ export const RSS_SOURCES: RSSSourceConfig[] = [
     sport: "MLB",
     reputation: 90,
     minFetchIntervalMinutes: 60,
+    maxItems: 15,
+  },
+  {
+    name: "MLB Trade Rumors – Mariners",
+    slug: "mlbtr-mariners",
+    url: "https://www.mlbtraderumors.com/seattle-mariners/feed",
+    teamSlug: "mariners",
+    sport: "MLB",
+    reputation: 85,
+    minFetchIntervalMinutes: 30,
     maxItems: 15,
   },
   {
@@ -255,10 +267,11 @@ export const RSS_SOURCES: RSSSourceConfig[] = [
     requireTeamMatch: true,  // league-wide feed — only keep Sonics/expansion articles
   },
   // ── WSU Cougars ───────────────────────────────────────────────────────────
+  // (All Cougs Up removed 2026-09-26 — feed went dead after 2026-02-10.)
   {
-    name: "All Cougs Up (SB Nation)",
-    slug: "all-cougs-up",
-    url: "https://allcougdup.com/feed/",
+    name: "CougCenter (SB Nation)",
+    slug: "cougcenter",
+    url: "https://www.cougcenter.com/rss/index.xml",
     teamSlug: "cougars",
     sport: "NCAA",
     reputation: 78,
