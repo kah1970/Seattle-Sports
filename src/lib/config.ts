@@ -24,11 +24,25 @@ export const TEAMS = {
     colorPrimary: "#002244",
     colorSecondary: "#69BE28",
     colorAccent: "#A5ACAF",
-    season2025: {
-      label: "2025 season",
+    // This season's record comes live from ESPN; these values only show if
+    // that API is unreachable.
+    championship: {
+      title: "Super Bowl LX Champions",
+      season: "2025",
       record: "14-3",
-      finish: "Super Bowl LX Champions 🏆",
-      notes: ["Sam Darnold: Super Bowl MVP", "JSN: 1,793 rec yds — NFL Offensive POY", "Witherspoon: PFF 91.2 — top CB in NFC"],
+      highlights: [
+        "Sam Darnold: Super Bowl MVP",
+        "Jaxon Smith-Njigba: 1,793 receiving yards, NFL Offensive Player of the Year",
+        "Devon Witherspoon: PFF 91.2, top corner in the NFC",
+      ],
+      // Drop your own photos in public/champions/ and list them here, e.g.
+      // photos: [{ src: "/champions/trophy.jpg", alt: "Lombardi Trophy" }],
+    },
+    season2025: {
+      label: "2026",
+      record: "—",
+      finish: "Live record unavailable",
+      notes: [], // last season's title is shown in the championship banner
     },
   },
   supersonics: {

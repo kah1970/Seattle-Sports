@@ -14,6 +14,7 @@ import { DivisionStandings } from "@/components/division-standings";
 import { StatLeaderBars } from "@/components/stat-leader-bars";
 import { SeasonPulse } from "@/components/season-pulse";
 import { GoDeeper } from "@/components/go-deeper";
+import { ChampionsBanner, Championship } from "@/components/champions-banner";
 import { StatNuggetData } from "@/lib/types";
 import { ResearchLink } from "@/lib/config";
 import {
@@ -21,7 +22,7 @@ import {
   ordinal,
   shortDivision,
 } from "@/lib/analytics/season-pulse";
-import { StatsResponse, PlayerStat, TodaysGameData, StandingsData } from "@/lib/stats";
+import { StatsResponse, PlayerStat, TodaysGameData, StandingsData, NflSeasonSummary } from "@/lib/stats";
 
 type FilterType = "all" | "news" | "analysis" | "opinion" | "highlights" | "retrospective" | "spring-training" | "roster-move" | "prospects";
 type TimeFilter = "all" | "24h" | "7d" | "30d";
@@ -35,6 +36,7 @@ interface TeamPageData {
     colorPrimary: string;
     colorSecondary: string;
     colorAccent?: string;
+    championship?: Championship;
     season2025?: {
       label?: string;
       record: string;
@@ -86,12 +88,13 @@ interface TeamPageData {
   todaysGame?: TodaysGameData | null;
   standings?: StandingsData | null;
   pulse: SeasonPulseData | null;
+  nflSummary: NflSeasonSummary | null;
   hasPulse: boolean;
   researchLinks: ResearchLink[];
 }
 
 export function TeamPageClient({ data }: { data: TeamPageData }) {
-  const { teamConfig, articles, games, metrics, nugget, liveStats, todaysGame, standings, pulse, hasPulse, researchLinks } = data;
+  const { teamConfig, articles, games, metrics, nugget, liveStats, todaysGame, standings, pulse, nflSummary, hasPulse, researchLinks } = data;
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -169,6 +172,13 @@ export function TeamPageClient({ data }: { data: TeamPageData }) {
           .join(" "),
         notes: [pulse.verdict.headline, ...(summary?.notes ?? [])],
       }
+    : nflSummary
+      ? {
+          label: String(nflSummary.season),
+          record: nflSummary.record,
+          finish: nflSummary.standing ?? "",
+          notes: summary?.notes ?? [],
+        }
     : summary
       ? { label: summary.label ?? "", record: summary.record, finish: summary.finish, notes: summary.notes }
       : null;
@@ -244,6 +254,11 @@ export function TeamPageClient({ data }: { data: TeamPageData }) {
       {/* Today's Game Hero */}
       {todaysGame?.found && (
         <TodaysGameHero game={todaysGame} teamConfig={teamConfig} />
+      )}
+
+      {/* Championship banner */}
+      {teamConfig.championship && (
+        <ChampionsBanner championship={teamConfig.championship} />
       )}
 
       {/* Season Pulse + research links */}

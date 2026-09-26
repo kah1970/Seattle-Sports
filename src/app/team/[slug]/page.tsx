@@ -7,7 +7,7 @@ import { createMLBScoresAdapter } from "@/lib/sources/mlb-scores-adapter";
 import { getDailyStatNugget } from "@/lib/analytics/stat-nuggets";
 import { notFound } from "next/navigation";
 import { TeamPageClient } from "./team-client";
-import { fetchTeamStats, fetchTodaysGame, fetchDivisionStandings, StatsResponse } from "@/lib/stats";
+import { fetchTeamStats, fetchTodaysGame, fetchDivisionStandings, fetchSeahawksSeasonSummary, StatsResponse } from "@/lib/stats";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +35,7 @@ export default async function TeamPage({
     url: l.url.replace("{season}", season),
   }));
 
-  const [recentArticles, dbGames, metrics, poolNugget, liveStats, todaysGame, standings, pulse, liveGames] = await Promise.all([
+  const [recentArticles, dbGames, metrics, poolNugget, liveStats, todaysGame, standings, pulse, liveGames, nflSummary] = await Promise.all([
     // Pull the most recent articles and rank them below, so recency is
     // scored against today rather than frozen at the time they were stored.
     prisma.article.findMany({
@@ -84,6 +84,7 @@ export default async function TeamPage({
     // Live schedule so the sidebar agrees with the Next Game panel even
     // before the cron job has stored anything.
     mlbTeamId ? createMLBScoresAdapter().fetchScores!() : Promise.resolve([]),
+    params.slug === "seahawks" ? fetchSeahawksSeasonSummary() : Promise.resolve(null),
   ]);
 
   const articles = recentArticles
@@ -143,6 +144,7 @@ export default async function TeamPage({
     todaysGame,
     standings,
     pulse,
+    nflSummary,
     hasPulse: mlbTeamId !== undefined,
     researchLinks,
   };

@@ -6,6 +6,13 @@
  * All responses are cached via Next.js `next: { revalidate }` for performance.
  */
 
+import { currentMlbSeason } from "@/lib/analytics/season-pulse";
+
+/** NFL season year: a season starts in September and runs into February. */
+export function currentNflSeason(now: Date = new Date()): number {
+    return now.getMonth() >= 8 ? now.getFullYear() : now.getFullYear() - 1;
+}
+
 // ── Constants ──────────────────────────────────────────────────────────────
 
 const MLB_API = "https://statsapi.mlb.com/api/v1";
@@ -17,8 +24,10 @@ const SEAHAWKS_ESPN_ID = 26;
 // NBA expansion — track Seattle's bid coverage via league-level NBA ESPN id
 const NBA_ESPN_ID = 41; // OKC Thunder (placeholder for Sonics expansion tracking)
 
-const CURRENT_MLB_SEASON = 2026;
-const CURRENT_NFL_SEASON = 2025;
+// Seasons follow the calendar: MLB's starts in March, the NFL's in September
+// (a January playoff game still belongs to the previous year's season).
+const CURRENT_MLB_SEASON = Number(currentMlbSeason());
+const CURRENT_NFL_SEASON = currentNflSeason();
 
 // ── Type Definitions ───────────────────────────────────────────────────────
 
@@ -49,7 +58,7 @@ export interface StatsResponse {
 // ── MLB Stats (Mariners) ───────────────────────────────────────────────────
 
 export async function fetchMarinersRoster(): Promise<TeamRosterEntry[]> {
-    const url = `${MLB_API}/teams/${MARINERS_MLB_ID}/roster?season=2026&rosterType=active`;
+    const url = `${MLB_API}/teams/${MARINERS_MLB_ID}/roster?season=${CURRENT_MLB_SEASON}&rosterType=active`;
     const res = await fetch(url, { next: { revalidate: 3600 } });
     if (!res.ok) throw new Error(`MLB roster API: ${res.status}`);
 
@@ -151,7 +160,7 @@ export async function fetchSeahawksRoster(): Promise<TeamRosterEntry[]> {
 }
 
 export async function fetchSeahawksStats(): Promise<{ category: string; players: PlayerStat[] }[]> {
-    // ESPN team stats summary for 2025 season
+    // ESPN team summary for the current season
     const url = `${ESPN_API}/football/nfl/teams/${SEAHAWKS_ESPN_ID}?enable=roster,stats,record`;
     const res = await fetch(url, { next: { revalidate: 1800 } });
     if (!res.ok) return [];
@@ -164,7 +173,7 @@ export async function fetchSeahawksStats(): Promise<{ category: string; players:
     const record = team.record?.items?.[0]?.summary ?? "N/A";
     return [
         {
-            category: "Team Record (2025)",
+            category: `Team Record (${CURRENT_NFL_SEASON})`,
             players: [
                 {
                     name: "Seattle Seahawks",
@@ -176,6 +185,37 @@ export async function fetchSeahawksStats(): Promise<{ category: string; players:
             ],
         },
     ];
+}
+
+export interface NflSeasonSummary {
+    season: number;
+    record: string;
+    standing: string | null;
+}
+
+/** Parses ESPN's team endpoint into this season's record and standing. */
+export function parseEspnSeasonSummary(data: unknown, season: number): NflSeasonSummary | null {
+    const team = (data as { team?: {
+        record?: { items?: Array<{ type?: string; summary?: string }> };
+        standingSummary?: string;
+    } })?.team;
+    const items = team?.record?.items ?? [];
+    const total = items.find((i) => i.type === "total") ?? items[0];
+    if (!total?.summary) return null;
+    return { season, record: total.summary, standing: team?.standingSummary ?? null };
+}
+
+/** Live Seahawks record for the header; null if ESPN is unreachable. */
+export async function fetchSeahawksSeasonSummary(): Promise<NflSeasonSummary | null> {
+    try {
+        const res = await fetch(`${ESPN_API}/football/nfl/teams/${SEAHAWKS_ESPN_ID}`, {
+            next: { revalidate: 1800 },
+        });
+        if (!res.ok) return null;
+        return parseEspnSeasonSummary(await res.json(), CURRENT_NFL_SEASON);
+    } catch {
+        return null;
+    }
 }
 
 // ── NBA — SuperSonics expansion tracking ──────────────────────────────────
