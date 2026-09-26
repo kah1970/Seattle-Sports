@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0a0e1a;
+  --foreground: #e8eaed;
+  --card: #111827;
+  --card-hover: #1a2332;
+  --border: #1e293b;
+  --muted: #6b7280;
+  --accent: #3b82f6;
+
+  --mariners-primary: #0C2C56;
+  --mariners-secondary: #005C5C;
+  --mariners-accent: #C4CED4;
+
+  --seahawks-primary: #002244;
+  --seahawks-secondary: #69BE28;
+  --seahawks-accent: #A5ACAF;
+
+  --sonics-primary: #1D428A;
+  --sonics-secondary: #FFC200;
+  --sonics-accent: #00653A;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-[var(--card)] border border-[var(--border)] rounded-lg p-4 transition-colors hover:bg-[var(--card-hover)];
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+  }
+
+  .badge-news {
+    @apply bg-blue-500/20 text-blue-400;
+  }
+
+  .badge-analysis {
+    @apply bg-purple-500/20 text-purple-400;
+  }
+
+  .badge-opinion {
+    @apply bg-amber-500/20 text-amber-400;
+  }
+
+  .badge-highlights {
+    @apply bg-green-500/20 text-green-400;
+  }
+
+  .badge-retrospective {
+    @apply bg-rose-500/20 text-rose-400;
+  }
+
+  .badge-spring-training {
+    @apply bg-sky-500/20 text-sky-400;
+  }
+
+  .badge-roster-move {
+    @apply bg-orange-500/20 text-orange-400;
+  }
+
+  .badge-prospects {
+    @apply bg-teal-500/20 text-teal-400;
+  }
+
+  /* Rendered HTML content from RSS feeds */
+  .prose-article {
+    @apply text-sm text-gray-300 leading-relaxed space-y-3;
+  }
+
+  .prose-article p {
+    @apply text-gray-300 leading-relaxed;
+  }
+
+  .prose-article a {
+    @apply text-blue-400 underline underline-offset-2 hover:text-blue-300 transition-colors;
+  }
+
+  .prose-article strong,
+  .prose-article b {
+    @apply text-gray-100 font-semibold;
+  }
+
+  .prose-article em,
+  .prose-article i {
+    @apply italic text-gray-300;
+  }
+
+  .prose-article h2,
+  .prose-article h3,
+  .prose-article h4 {
+    @apply text-gray-100 font-semibold mt-4 mb-1;
+  }
+
+  .prose-article ul,
+  .prose-article ol {
+    @apply pl-5 space-y-1;
+  }
+
+  .prose-article li {
+    @apply text-gray-300;
+  }
+
+  .prose-article ul>li {
+    @apply list-disc;
+  }
+
+  .prose-article ol>li {
+    @apply list-decimal;
+  }
+
+  .prose-article blockquote {
+    @apply border-l-2 border-blue-500 pl-3 italic text-gray-400;
+  }
+
+  .sparkline-container {
+    @apply inline-flex items-end gap-px h-8;
+  }
+
+  .sparkline-bar {
+    @apply w-1 bg-blue-500/50 rounded-t transition-all;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Date picker icon styling */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(2);
+  cursor: pointer;
+  background-color: rgba(59, 130, 246, 0.2);
+  border-radius: 4px;
+  padding: 4px;
+  transition: background-color 0.2s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  background-color: rgba(59, 130, 246, 0.4);
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
