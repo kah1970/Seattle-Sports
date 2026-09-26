@@ -1,4 +1,4 @@
-import { RANKING_WEIGHTS, PUBLISHER_REPUTATION } from "./config";
+import { RANKING_WEIGHTS, PUBLISHER_REPUTATION, RSS_SOURCES } from "./config";
 
 interface RankableArticle {
   publishedAt: Date;
@@ -45,7 +45,17 @@ export function computeRankScore(
       engagement * RANKING_WEIGHTS.engagement) /
     totalWeight;
 
-  return Math.round(score * 1000) / 1000;
+  // Recency above is one factor among several, so a deep, reputable piece
+  // could otherwise outrank today's news for months. Stale stories are
+  // scaled down as a whole instead.
+  return Math.round(score * freshnessFactor(article.publishedAt) * 1000) / 1000;
+}
+
+function freshnessFactor(publishedAt: Date): number {
+  const daysAgo = (Date.now() - publishedAt.getTime()) / (1000 * 60 * 60 * 24);
+  if (daysAgo < 7) return 1;
+  if (daysAgo < 30) return 0.6;
+  return 0.3;
 }
 
 function computeRecencyScore(publishedAt: Date): number {
@@ -59,9 +69,15 @@ function computeRecencyScore(publishedAt: Date): number {
   return 0.05;
 }
 
+// Articles carry their feed's name as publisher ("MLB.com Mariners News"),
+// so check each feed's configured reputation before the generic list.
+const FEED_REPUTATION = new Map(RSS_SOURCES.map((s) => [s.name, s.reputation]));
+
 function computeReputationScore(publisher: string): number {
   const rep =
-    PUBLISHER_REPUTATION[publisher] || PUBLISHER_REPUTATION["default"];
+    PUBLISHER_REPUTATION[publisher] ??
+    FEED_REPUTATION.get(publisher) ??
+    PUBLISHER_REPUTATION["default"];
   return rep / 100;
 }
 

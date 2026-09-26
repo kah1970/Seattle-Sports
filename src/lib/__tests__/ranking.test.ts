@@ -7,6 +7,34 @@ import {
 } from "../ranking";
 
 describe("computeRankScore", () => {
+  it("uses each feed's configured reputation", () => {
+    const base = { publishedAt: new Date(), analysisDepth: 0.3, clickCount: 0, bookmarkCount: 0 };
+    // MLB.com Mariners News is configured at 95; an unknown publisher gets 50
+    expect(computeRankScore({ ...base, publisher: "MLB.com Mariners News" })).toBeGreaterThan(
+      computeRankScore({ ...base, publisher: "Some Unknown Blog" })
+    );
+  });
+
+  it("ranks today's quick news above a months-old deep analysis piece", () => {
+    // Mirrors a real case: a 6-month-old Lookout Landing analysis piece
+    // sitting above the day's MLB.com news on the Mariners page.
+    const today = computeRankScore({
+      publishedAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+      publisher: "MLB.com Mariners News",
+      analysisDepth: 0.15,
+      clickCount: 0,
+      bookmarkCount: 0,
+    });
+    const sixMonthsOld = computeRankScore({
+      publishedAt: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000),
+      publisher: "Lookout Landing",
+      analysisDepth: 0.9,
+      clickCount: 3,
+      bookmarkCount: 0,
+    });
+    expect(today).toBeGreaterThan(sixMonthsOld);
+  });
+
   it("gives higher scores to recent articles", () => {
     const recent = computeRankScore({
       publishedAt: new Date(),
