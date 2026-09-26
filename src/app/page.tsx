@@ -1,14 +1,17 @@
 import { prisma } from "@/lib/db";
 import { getAllDailyNuggets } from "@/lib/analytics/stat-nuggets";
 import { DashboardClient } from "./dashboard-client";
+import { computeRankScore } from "@/lib/ranking";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [articles, games, nuggets] = await Promise.all([
+  const [recentArticles, games, nuggets] = await Promise.all([
+    // Rank recent articles against today (stored rankScore is frozen at
+    // ingestion time, so old stories would never drop).
     prisma.article.findMany({
-      orderBy: { rankScore: "desc" },
-      take: 30,
+      orderBy: { publishedAt: "desc" },
+      take: 200,
       include: {
         team: { select: { name: true, slug: true, sport: true } },
         source: { select: { name: true, reputation: true } },
@@ -27,6 +30,11 @@ export default async function HomePage() {
     }),
     Promise.resolve(getAllDailyNuggets()),
   ]);
+
+  const articles = recentArticles
+    .map((a) => ({ ...a, rankScore: computeRankScore(a) }))
+    .sort((a, b) => b.rankScore - a.rankScore)
+    .slice(0, 30);
 
   const serialized = {
     articles: articles.map((a) => ({

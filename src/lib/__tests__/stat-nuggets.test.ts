@@ -29,10 +29,10 @@ describe("getDailyStatNugget", () => {
 });
 
 describe("getAllDailyNuggets", () => {
-  it("returns nuggets for all three teams", () => {
+  it("returns nuggets for every team", () => {
     const nuggets = getAllDailyNuggets();
-    expect(nuggets).toHaveLength(3);
+    expect(nuggets).toHaveLength(4);
     const teamSlugs = nuggets.map((n) => n.teamSlug).sort();
-    expect(teamSlugs).toEqual(["mariners", "seahawks", "supersonics"]);
+    expect(teamSlugs).toEqual(["cougars", "mariners", "seahawks", "supersonics"]);
   });
 });

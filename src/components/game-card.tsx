@@ -91,9 +91,10 @@ export function GameCard({
           className={`flex items-center justify-between ${!isHome ? "font-semibold text-white" : "text-gray-400"}`}
         >
           <span className="text-sm">{isHome ? opponent : teamName}</span>
+          {/* First row is always the away team, second the home team */}
           {isFinal && (
             <span className="text-sm font-mono tabular-nums">
-              {isHome ? awayScore : homeScore}
+              {awayScore}
             </span>
           )}
         </div>
@@ -106,7 +107,7 @@ export function GameCard({
           </span>
           {isFinal && (
             <span className="text-sm font-mono tabular-nums">
-              {isHome ? homeScore : awayScore}
+              {homeScore}
             </span>
           )}
         </div>

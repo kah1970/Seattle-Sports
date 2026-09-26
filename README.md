@@ -142,6 +142,21 @@ curl "https://your-app.vercel.app/api/cron/refresh?secret=YOUR_CRON_SECRET"
 
 On Vercel, the cron is configured in `vercel.json` to run every 2 hours.
 
+## Season Pulse & Go Deeper
+
+The Mariners page header and **Season Pulse** panel come live from the public MLB Stats API (cached 15 min): record, division place, wild-card games back, win pace, run differential vs. expected record, and MLB ranks for runs, OPS, home runs, ERA and WHIP. The Mariners "Stat of the Day" is generated from the same data. If the API is unreachable the page falls back to the values in `TEAMS` in `src/lib/config.ts`.
+
+Every team page has a **Go Deeper** panel of research links, configured in `RESEARCH_LINKS` in `src/lib/config.ts`. Set `MLB_STATS_API_BASE` to point Season Pulse at a local mock.
+
+## Cleaning Up Off-Topic Articles
+
+Articles are assigned to a team only if they mention it (whole-word match on `TEAM_KEYWORDS`). To remove articles stored before that rule existed:
+
+```bash
+npm run db:prune            # dry run: lists what would be removed
+npm run db:prune -- --apply # delete them (bookmarked or rated articles are kept)
+```
+
 ## Ranking Algorithm
 
 Articles are scored based on:

@@ -12,6 +12,7 @@
     "test:e2e": "playwright test",
     "db:push": "prisma db push",
     "db:seed": "npx tsx prisma/seed.ts",
+    "db:prune": "npx tsx scripts/prune-off-topic.ts",
     "db:reset": "prisma db push --force-reset && npx tsx prisma/seed.ts",
     "cron:refresh": "curl -s http://localhost:3000/api/cron/refresh"
   },

@@ -33,7 +33,7 @@ const MARINERS_NUGGETS: Omit<StatNuggetData, "teamSlug" | "sport">[] = [
   },
   {
     title: "Colt Emerson Watch",
-    body: "Colt Emerson, Seattle's top prospect, posted a .312 average with 18 home runs across Double-A and Triple-A in 2025. He could be the Mariners' shortstop of the future as soon as 2026.",
+    body: "Colt Emerson, Seattle's top prospect, posted a .312 average with 18 home runs across Double-A and Triple-A in 2025. He's widely seen as the Mariners' shortstop of the future.",
     category: "trend",
   },
 ];

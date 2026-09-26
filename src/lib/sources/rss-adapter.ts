@@ -240,22 +240,38 @@ function extractTags(title: string, content: string): string[] {
 
 // ── Team Routing ───────────────────────────────────────────────────────────
 
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** True if the text mentions one of the team's keywords as a whole word. */
+export function mentionsTeam(text: string, slug: string): boolean {
+  const keywords = TEAM_KEYWORDS[slug] || [slug];
+  const lower = text.toLowerCase();
+  return keywords.some((kw) =>
+    new RegExp(`(^|[^\\p{L}\\p{N}])${escapeRegExp(kw)}($|[^\\p{L}\\p{N}])`, "u").test(lower)
+  );
+}
+
 /**
- * For cross-team feeds, detect which team(s) an article mentions.
- * Returns slugs of matched teams, or [fallback] if none match.
+ * Decide which of a feed's teams an article belongs to.
+ * - Team-specific feeds (no requireTeamMatch) keep every article.
+ * - Feeds with requireTeamMatch keep an article only for teams it mentions;
+ *   an article that mentions none of them is dropped (empty array).
+ * - Cross-team feeds without requireTeamMatch fall back to the primary team.
  */
-function detectTeams(
+export function routeArticle(
   title: string,
   content: string,
-  teamSlugs: string[],
-  fallback: string
+  config: Pick<RSSSourceConfig, "teamSlug" | "teamSlugs" | "requireTeamMatch">
 ): string[] {
-  const text = `${title} ${content}`.toLowerCase();
-  const matched = teamSlugs.filter((slug) => {
-    const keywords = TEAM_KEYWORDS[slug] || [slug];
-    return keywords.some((kw) => text.includes(kw));
-  });
-  return matched.length > 0 ? matched : [fallback];
+  const candidates = config.teamSlugs ?? [config.teamSlug];
+  if (!config.requireTeamMatch && !config.teamSlugs) return [config.teamSlug];
+
+  const text = `${title} ${content}`;
+  const matched = candidates.filter((slug) => mentionsTeam(text, slug));
+  if (matched.length > 0) return matched;
+  return config.requireTeamMatch ? [] : [config.teamSlug];
 }
 
 // ── HTML Entity Decoder ────────────────────────────────────────────────────
@@ -310,18 +326,10 @@ export function createRSSAdapter(config: RSSSourceConfig): SourceAdapter {
         const articleType = classifyArticleType(title, content);
         const tags = extractTags(title, content);
 
-        // Multi-team routing
-        const targetSlugs = config.teamSlugs
-          ? detectTeams(title, content, config.teamSlugs, config.teamSlug)
-          : [config.teamSlug];
-
-        // For league-wide feeds: skip articles that don't mention any Seattle team
-        if (config.requireTeamMatch) {
-          const searchText = `${title} ${content}`.toLowerCase();
-          const allKeywords = Object.values(TEAM_KEYWORDS).flat();
-          const mentionsSeattle = allKeywords.some((kw) => searchText.includes(kw));
-          if (!mentionsSeattle) continue; // drop non-Seattle article
-        }
+        // Assign to the team(s) the article is about; drop off-topic items
+        // from league-wide and cross-team feeds.
+        const targetSlugs = routeArticle(title, content, config);
+        if (targetSlugs.length === 0) continue;
 
         for (const teamSlug of targetSlugs) {
           items.push({

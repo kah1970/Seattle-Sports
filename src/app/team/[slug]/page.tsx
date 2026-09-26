@@ -1,5 +1,9 @@
 import { prisma } from "@/lib/db";
-import { TEAMS, TeamSlug } from "@/lib/config";
+import { TEAMS, TeamSlug, TEAM_API_IDS, RESEARCH_LINKS } from "@/lib/config";
+import { computeRankScore } from "@/lib/ranking";
+import { currentMlbSeason, pulseNugget } from "@/lib/analytics/season-pulse";
+import { fetchSeasonPulse } from "@/lib/sources/mlb-season-pulse";
+import { createMLBScoresAdapter } from "@/lib/sources/mlb-scores-adapter";
 import { getDailyStatNugget } from "@/lib/analytics/stat-nuggets";
 import { notFound } from "next/navigation";
 import { TeamPageClient } from "./team-client";
@@ -24,11 +28,20 @@ export default async function TeamPage({
   });
   if (!team) notFound();
 
-  const [articles, games, metrics, nugget, liveStats, todaysGame, standings] = await Promise.all([
+  const mlbTeamId = TEAM_API_IDS[params.slug]?.mlbId;
+  const season = currentMlbSeason();
+  const researchLinks = RESEARCH_LINKS[params.slug as TeamSlug].map((l) => ({
+    ...l,
+    url: l.url.replace("{season}", season),
+  }));
+
+  const [recentArticles, dbGames, metrics, poolNugget, liveStats, todaysGame, standings, pulse, liveGames] = await Promise.all([
+    // Pull the most recent articles and rank them below, so recency is
+    // scored against today rather than frozen at the time they were stored.
     prisma.article.findMany({
       where: { teamId: team.id },
-      orderBy: { rankScore: "desc" },
-      take: 30,
+      orderBy: { publishedAt: "desc" },
+      take: 150,
       include: {
         team: { select: { name: true, slug: true, sport: true } },
         source: { select: { name: true, reputation: true } },
@@ -67,7 +80,43 @@ export default async function TeamPage({
     fetchTeamStats(params.slug).catch((): StatsResponse => ({ team: params.slug, sport: "unknown", season: 2025, fetchedAt: new Date().toISOString() })),
     fetchTodaysGame(params.slug).catch(() => null),
     fetchDivisionStandings(params.slug).catch(() => null),
+    mlbTeamId ? fetchSeasonPulse(mlbTeamId) : Promise.resolve(null),
+    // Live schedule so the sidebar agrees with the Next Game panel even
+    // before the cron job has stored anything.
+    mlbTeamId ? createMLBScoresAdapter().fetchScores!() : Promise.resolve([]),
   ]);
+
+  const articles = recentArticles
+    .map((a) => ({ ...a, rankScore: computeRankScore(a) }))
+    .sort((a, b) => b.rankScore - a.rankScore)
+    .slice(0, 30);
+
+  const now = Date.now();
+  const games =
+    liveGames.length > 0
+      ? liveGames
+          .filter(
+            (g) =>
+              (g.status !== "scheduled" && g.gameDate.getTime() >= now - 14 * 86400000) ||
+              (g.status === "scheduled" && g.gameDate.getTime() >= now - 6 * 3600000)
+          )
+          .map((g) => ({
+            ...g,
+            id: g.externalId ?? `${g.opponent}-${g.gameDate.toISOString()}`,
+            venue: g.venue ?? null,
+            homeScore: g.homeScore ?? null,
+            awayScore: g.awayScore ?? null,
+            summary: g.summary ?? null,
+            externalId: g.externalId ?? null,
+            updatedAt: new Date(now),
+            createdAt: new Date(now),
+          }))
+      : dbGames;
+
+  const livePulseNugget = pulse ? pulseNugget(pulse) : null;
+  const nugget = livePulseNugget
+    ? { ...livePulseNugget, teamSlug: params.slug, sport: teamConfig.sport }
+    : poolNugget;
 
   const serialized = {
     teamConfig,
@@ -93,6 +142,9 @@ export default async function TeamPage({
     liveStats,
     todaysGame,
     standings,
+    pulse,
+    hasPulse: mlbTeamId !== undefined,
+    researchLinks,
   };
 
   return <TeamPageClient data={serialized} />;

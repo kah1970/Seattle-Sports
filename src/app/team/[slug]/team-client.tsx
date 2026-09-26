@@ -12,7 +12,15 @@ import { WinLossIndicator } from "@/components/win-loss-indicator";
 import { TodaysGameHero } from "@/components/todays-game-hero";
 import { DivisionStandings } from "@/components/division-standings";
 import { StatLeaderBars } from "@/components/stat-leader-bars";
+import { SeasonPulse } from "@/components/season-pulse";
+import { GoDeeper } from "@/components/go-deeper";
 import { StatNuggetData } from "@/lib/types";
+import { ResearchLink } from "@/lib/config";
+import {
+  SeasonPulse as SeasonPulseData,
+  ordinal,
+  shortDivision,
+} from "@/lib/analytics/season-pulse";
 import { StatsResponse, PlayerStat, TodaysGameData, StandingsData } from "@/lib/stats";
 
 type FilterType = "all" | "news" | "analysis" | "opinion" | "highlights" | "retrospective" | "spring-training" | "roster-move" | "prospects";
@@ -28,6 +36,7 @@ interface TeamPageData {
     colorSecondary: string;
     colorAccent?: string;
     season2025?: {
+      label?: string;
       record: string;
       finish: string;
       notes: readonly string[];
@@ -76,10 +85,13 @@ interface TeamPageData {
   liveStats?: StatsResponse;
   todaysGame?: TodaysGameData | null;
   standings?: StandingsData | null;
+  pulse: SeasonPulseData | null;
+  hasPulse: boolean;
+  researchLinks: ResearchLink[];
 }
 
 export function TeamPageClient({ data }: { data: TeamPageData }) {
-  const { teamConfig, articles, games, metrics, nugget, liveStats, todaysGame, standings } = data;
+  const { teamConfig, articles, games, metrics, nugget, liveStats, todaysGame, standings, pulse, hasPulse, researchLinks } = data;
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -142,6 +154,25 @@ export function TeamPageClient({ data }: { data: TeamPageData }) {
     playerMetrics.get(m.playerName)!.push(m);
   }
 
+  // Header summary: live standings when we have them, config otherwise
+  const summary = teamConfig.season2025;
+  const header = pulse
+    ? {
+        label: pulse.season,
+        record: `${pulse.wins}-${pulse.losses}`,
+        finish: [
+          pulse.divisionRank ? ordinal(pulse.divisionRank) : null,
+          pulse.division ? shortDivision(pulse.division) : null,
+          pulse.gamesBack && pulse.gamesBack !== "-" ? `· ${pulse.gamesBack} GB` : null,
+        ]
+          .filter(Boolean)
+          .join(" "),
+        notes: [pulse.verdict.headline, ...(summary?.notes ?? [])],
+      }
+    : summary
+      ? { label: summary.label ?? "", record: summary.record, finish: summary.finish, notes: summary.notes }
+      : null;
+
   // Determine which stat categories get bar charts
   const battingGroup = liveStats?.leaders?.find((g) => g.category === "Batting");
   const pitchingGroup = liveStats?.leaders?.find((g) => g.category === "Pitching");
@@ -180,26 +211,26 @@ export function TeamPageClient({ data }: { data: TeamPageData }) {
             />
           </div>
 
-          {/* 2025 Season Summary */}
-          {teamConfig.season2025 && (
+          {/* Season Summary */}
+          {header && (
             <div className="hidden md:flex flex-col items-end gap-1 shrink-0 text-right">
               <div className="flex items-baseline gap-2">
                 <span
                   className="text-3xl font-bold tabular-nums"
                   style={{ color: teamConfig.colorSecondary }}
                 >
-                  {teamConfig.season2025.record}
+                  {header.record}
                 </span>
-                <span className="text-xs text-gray-400 uppercase tracking-wide">2026</span>
+                <span className="text-xs text-gray-400 uppercase tracking-wide">{header.label}</span>
               </div>
               <div
                 className="text-sm font-semibold"
                 style={{ color: teamConfig.colorAccent ?? teamConfig.colorSecondary }}
               >
-                {teamConfig.season2025.finish}
+                {header.finish}
               </div>
               <ul className="mt-1 space-y-0.5">
-                {teamConfig.season2025.notes.map((note) => (
+                {header.notes.map((note) => (
                   <li key={note} className="text-xs text-gray-400">
                     {note}
                   </li>
@@ -213,6 +244,16 @@ export function TeamPageClient({ data }: { data: TeamPageData }) {
       {/* Today's Game Hero */}
       {todaysGame?.found && (
         <TodaysGameHero game={todaysGame} teamConfig={teamConfig} />
+      )}
+
+      {/* Season Pulse + research links */}
+      {hasPulse && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <SeasonPulse pulse={pulse} />
+          </div>
+          <GoDeeper links={researchLinks} />
+        </div>
       )}
 
       {/* Filters */}
@@ -291,6 +332,8 @@ export function TeamPageClient({ data }: { data: TeamPageData }) {
 
         {/* Sidebar */}
         <div className="space-y-5">
+          {!hasPulse && <GoDeeper links={researchLinks} />}
+
           {/* Schedule */}
           <div>
             <SectionHeader title="Schedule" icon="calendar" count={scheduled.length} accentColor={teamConfig.colorSecondary} />

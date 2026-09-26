@@ -70,14 +70,15 @@ async function main() {
   const espnNba = await prisma.source.findUnique({ where: { slug: "espn-nba" } });
   const mlbCom = await prisma.source.findUnique({ where: { slug: "mlb-com" } });
 
-  // Seed sample articles — real published URLs (2025-2026 coverage)
+  // Seed sample articles. They carry fixed dates that match their content,
+  // so sample stories never look like today's news.
   const sampleArticles = [
     {
       title: "Julio Rodriguez Enters 2026 Spring Training with Eyes on Breakout Season",
       url: "https://www.mlb.com/mariners/news/julio-rodriguez-spring-training-2026",
       urlHash: "seed-julio-spring-2026",
       publisher: "MLB.com",
-      publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      publishedAt: new Date("2026-02-18T17:00:00Z"),
       summary: "Julio Rodriguez arrives in Peoria with a revamped swing, focused on cutting strikeouts and improving his OBP in 2026.",
       content: "After a productive 2025, Julio Rodriguez is entering spring training with high expectations. The Mariners centerfielder has been working with hitting coaches over the offseason to refine his approach at the plate, focusing on pitch recognition and driving the ball to the opposite field more consistently.",
       articleType: "spring-training",
@@ -92,7 +93,7 @@ async function main() {
       url: "https://blogs.fangraphs.com/george-kirby-sweeper-statcast-2025/",
       urlHash: "seed-kirby-statcast-2026",
       publisher: "FanGraphs",
-      publishedAt: new Date(Date.now() - 8 * 60 * 60 * 1000),
+      publishedAt: new Date("2026-01-20T17:00:00Z"),
       summary: "Kirby's sweeper generated a 38% whiff rate last season — one of the best in the AL. Here's what Statcast says about its movement and location.",
       content: "George Kirby added nearly 2 inches of horizontal break to his sweeper in 2025, pushing it into elite territory. Combined with his elite command metrics (walk rate under 4%), he's become one of the most efficient arms in baseball. His xERA of 2.91 and FIP of 3.05 suggest his ERA of 3.30 actually undersells his performance.",
       articleType: "analysis",
@@ -107,7 +108,7 @@ async function main() {
       url: "https://www.seattletimes.com/sports/mariners/colt-emerson-spring-training-2026/",
       urlHash: "seed-emerson-spring-2026",
       publisher: "Seattle Times",
-      publishedAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
+      publishedAt: new Date("2026-02-25T21:00:00Z"),
       summary: "The Mariners' top prospect went 2-for-3 with a walk in his first live game action of spring training.",
       content: "Colt Emerson, Baseball America's #1 Mariners prospect, turned heads in his first spring training game. The 21-year-old shortstop showed the patient approach and plus bat speed that have scouts excited about his big league timeline. Manager Scott Servais called his at-bats 'very mature for his age.'",
       articleType: "spring-training",
@@ -122,7 +123,7 @@ async function main() {
       url: "https://www.fieldgulls.com/2026/2/jsn-1793-yards-offensive-player-year-analysis",
       urlHash: "seed-jsn-2026",
       publisher: "Field Gulls",
-      publishedAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+      publishedAt: new Date("2026-02-15T18:00:00Z"),
       summary: "JSN's 1,793 receiving yards led the NFL and earned him Offensive Player of the Year. What does it mean for Seattle's 2026 offense?",
       content: "Jaxon Smith-Njigba shattered the Seahawks' single-season receiving yards record in 2025, finishing with 1,793 yards on 117 receptions — numbers that earned him NFL Offensive Player of the Year. Playing opposite Cooper Kupp, JSN forced single coverage all season. His success with Sam Darnold's timing-based system was a key driver of the Super Bowl LX run.",
       articleType: "analysis",
@@ -137,7 +138,7 @@ async function main() {
       url: "https://www.fieldgulls.com/2026/2/devon-witherspoon-pff-coverage-metrics",
       urlHash: "seed-witherspoon-2026",
       publisher: "Field Gulls",
-      publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
+      publishedAt: new Date("2026-03-05T18:00:00Z"),
       summary: "Witherspoon posted a PFF coverage grade of 91.2 in 2025 — best among Seahawk corners since Richard Sherman's peak years.",
       content: "Using PFF's coverage metrics and Next Gen Stats, Devon Witherspoon allowed a 48.3% completion rate in coverage with 0 touchdowns in 14 games last season. His man-coverage grade of 88.4 puts him in the top-5 corners in the NFL. His ability to press and trail deep routes without help is a defensive coordinator's dream.",
       articleType: "analysis",
@@ -152,7 +153,7 @@ async function main() {
       url: "https://profootballtalk.nbcsports.com/2026/02/kenneth-walker-seahawks-2026/",
       urlHash: "seed-walker-2026",
       publisher: "ProFootballTalk",
-      publishedAt: new Date(Date.now() - 18 * 60 * 60 * 1000),
+      publishedAt: new Date("2026-06-01T18:00:00Z"),
       summary: "After an injury-shortened 2025, Kenneth Walker III is expected to be the lead back entering 2026 spring workouts.",
       content: "Kenneth Walker III carried the ball 127 times for 603 yards before a knee injury ended his 2025 season in Week 12. He was a full participant in Super Bowl preparation and the 2026 offseason program. Head coach Mike Macdonald confirmed Walker is the starter entering spring workouts.",
       articleType: "news",
@@ -167,7 +168,7 @@ async function main() {
       url: "https://www.nba.com/game/0021900001/history",
       urlHash: "seed-sonics-1979",
       publisher: "ESPN NBA",
-      publishedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      publishedAt: new Date("2026-06-01T15:00:00Z"),
       summary: "Revisiting the greatest moment in Seattle basketball history — the SuperSonics' championship in 1979 over the Washington Bullets.",
       content: "On June 1, 1979, the Seattle SuperSonics defeated the Washington Bullets 97-93 in Game 5 to claim the franchise's only NBA Championship. Gus Williams scored 23 points, Dennis Johnson added 21, and Jack Sikma controlled the boards. Coach Lenny Wilkens became the first player-coach to win an NBA title.",
       articleType: "retrospective",
@@ -182,7 +183,7 @@ async function main() {
       url: "https://www.seattletimes.com/sports/other-sports/nba-expansion-seattle-2026-bid/",
       urlHash: "seed-sonics-expansion-2026",
       publisher: "Seattle Times",
-      publishedAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
+      publishedAt: new Date("2026-02-20T19:00:00Z"),
       summary: "A new Seattle ownership group has formally submitted an expansion bid to the NBA, citing Climate Pledge Arena and projected market revenue.",
       content: "A consortium of Seattle investors led by technology executives has submitted a formal NBA expansion bid, the group confirmed Tuesday. The bid includes arena plans at the modernized Climate Pledge Arena, a market analysis showing Seattle as the 7th-largest NBA market by revenue potential, and a $500M franchise fee commitment.",
       articleType: "news",
@@ -197,7 +198,7 @@ async function main() {
       url: "https://www.nba.com/news/gary-payton-seattle-supersonics-legacy",
       urlHash: "seed-payton-legacy",
       publisher: "ESPN NBA",
-      publishedAt: new Date(Date.now() - 48 * 60 * 60 * 1000),
+      publishedAt: new Date("2026-01-10T18:00:00Z"),
       summary: "How Gary Payton's tenacious defense and leadership defined the SuperSonics' identity throughout the 1990s.",
       content: "Gary Payton earned the nickname 'The Glove' for good reason. From 1990 to 2003, he was one of the most suffocating perimeter defenders in NBA history, winning the Defensive Player of the Year award in 1996 and making 9 All-Defensive First Teams. He remains Seattle's all-time leader in assists and steals.",
       articleType: "retrospective",
@@ -212,7 +213,7 @@ async function main() {
       url: "https://www.mlb.com/mariners/news/mariners-spring-training-camp-report-2026",
       urlHash: "seed-mariners-camp-2026",
       publisher: "MLB.com",
-      publishedAt: new Date(Date.now() - 10 * 60 * 60 * 1000),
+      publishedAt: new Date("2026-03-01T18:00:00Z"),
       summary: "Seven quality arms competing for five rotation spots — Seattle may have the deepest pitching staff in Cactus League.",
       content: "The Mariners entered spring training with an embarrassment of pitching riches. Beyond the big three of Gilbert, Kirby, and Castillo, Bryan Woo and Bryce Miller are pushing for starts. Matt Brash and Andrés Muñoz anchor an elite bullpen. Pitching coach Pete Woodworth called it 'the deepest staff I've had in 20 years in this game.'",
       articleType: "spring-training",
@@ -227,7 +228,7 @@ async function main() {
   for (const article of sampleArticles) {
     await prisma.article.upsert({
       where: { urlHash: article.urlHash },
-      update: {},
+      update: { publishedAt: article.publishedAt },
       create: article,
     });
   }

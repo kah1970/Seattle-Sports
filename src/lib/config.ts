@@ -7,10 +7,13 @@ export const TEAMS = {
     colorPrimary: "#0C2C56",
     colorSecondary: "#005C5C",
     colorAccent: "#C4CED4",
+    // Record and standing come live from the MLB Stats API (Season Pulse);
+    // these values only show if that API is unreachable.
     season2025: {
-      record: "5-9",
-      finish: "5th AL West",
-      notes: ["2026 Season — 2.5 GB", "Bryan Woo: 1.50 ERA, 17 K in 18 IP", "2025: 88-74, AL Wild Card (lost ALDS 3-2)"],
+      label: "2026",
+      record: "—",
+      finish: "Live standings unavailable",
+      notes: ["2025: 88-74, AL Wild Card (lost ALDS 3-2)"],
     },
   },
   seahawks: {
@@ -22,6 +25,7 @@ export const TEAMS = {
     colorSecondary: "#69BE28",
     colorAccent: "#A5ACAF",
     season2025: {
+      label: "2025 season",
       record: "14-3",
       finish: "Super Bowl LX Champions 🏆",
       notes: ["Sam Darnold: Super Bowl MVP", "JSN: 1,793 rec yds — NFL Offensive POY", "Witherspoon: PFF 91.2 — top CB in NFC"],
@@ -36,6 +40,7 @@ export const TEAMS = {
     colorSecondary: "#00653A",
     colorAccent: "#1D428A",
     season2025: {
+      label: "Status",
       record: "—",
       finish: "Expansion Bid Filed",
       notes: ["Formal NBA expansion bid submitted Feb 2026", "Climate Pledge Arena: NBA-ready", "Decision expected 2026-27"],
@@ -50,6 +55,7 @@ export const TEAMS = {
     colorSecondary: "#5E6A71",
     colorAccent: "#D4D2CB",
     season2025: {
+      label: "2025-26",
       record: "Football: 8-5 · Basketball: 17-14",
       finish: "New Pac-12 Season",
       notes: ["Football: Jake Dickert, New Pac-12 Conference", "Basketball: Kyle Smith, NCAA Tournament bubble", "Go Cougs! ✊"],
@@ -199,7 +205,7 @@ export const RSS_SOURCES: RSSSourceConfig[] = [
     slug: "seattle-times-sports",
     url: "https://www.seattletimes.com/sports/feed/",
     teamSlug: "mariners",
-    teamSlugs: ["mariners", "seahawks", "supersonics"],
+    teamSlugs: ["mariners", "seahawks", "supersonics", "cougars"],
     sport: "MLB",
     reputation: 82,
     minFetchIntervalMinutes: 20,
@@ -211,7 +217,7 @@ export const RSS_SOURCES: RSSSourceConfig[] = [
     slug: "espn-seattle-710",
     url: "https://sports.mynorthwest.com/feed/",
     teamSlug: "mariners",
-    teamSlugs: ["mariners", "seahawks", "supersonics"],
+    teamSlugs: ["mariners", "seahawks", "supersonics", "cougars"],
     sport: "MLB",
     reputation: 78,
     minFetchIntervalMinutes: 20,
@@ -245,11 +251,16 @@ export const RSS_SOURCES: RSSSourceConfig[] = [
 ];
 
 /** Keywords used to route cross-team articles to the correct team slug */
+/**
+ * Words that mark an article as being about a team. Matched as whole words
+ * (see mentionsTeam in rss-adapter.ts), so keep them specific: bare surnames
+ * like "walker" or nicknames like "hawks" and "thunder" pull in other teams.
+ */
 export const TEAM_KEYWORDS: Record<string, string[]> = {
-  mariners: ["mariners", "m's", "safeco", "t-mobile park", "julio", "raleigh", "gilbert", "kirby", "castillo"],
-  seahawks: ["seahawks", "hawks", "lumen field", "darnold", "jsn", "smith-njigba", "witherspoon", "walker", "kupp", "super bowl"],
-  supersonics: ["supersonics", "sonics", "seattle nba", "nba expansion", "nba seattle", "climate pledge arena", "key arena", "bring back the sonics", "thunder", "expansion bid"],
-  cougars: ["wsu", "cougar", "cougars", "washington state", "pullman", "dickert", "kyle smith", "coug"],
+  mariners: ["mariners", "m's", "t-mobile park", "julio rodriguez", "julio rodríguez", "cal raleigh", "logan gilbert", "george kirby", "luis castillo", "bryan woo", "bryce miller"],
+  seahawks: ["seahawks", "lumen field", "sam darnold", "smith-njigba", "devon witherspoon", "kenneth walker", "cooper kupp", "mike macdonald"],
+  supersonics: ["supersonics", "sonics", "seattle nba", "nba expansion", "nba seattle", "climate pledge arena", "key arena", "keyarena", "bring back the sonics", "expansion bid"],
+  cougars: ["wsu", "washington state", "cougars", "pullman", "coug", "cougs"],
 };
 
 export const PUBLISHER_REPUTATION: Record<string, number> = {
@@ -284,4 +295,80 @@ export const FEATURE_FLAGS = {
   REDIS_CACHE: process.env.REDIS_URL ? true : false,
   LLM_SUMMARIES: process.env.LLM_API_KEY ? true : false,
   LIVE_SCORES: process.env.LIVE_SCORES_ENABLED === "true",
+};
+
+export interface ResearchLink {
+  label: string;
+  url: string;
+  description: string;
+}
+
+/**
+ * Curated "Go Deeper" research links per team. `{season}` in a URL is
+ * replaced with the current season.
+ */
+export const RESEARCH_LINKS: Record<TeamSlug, ResearchLink[]> = {
+  mariners: [
+    {
+      label: "Baseball Savant",
+      url: "https://baseballsavant.mlb.com/team/136",
+      description: "Statcast: exit velocity, barrels, pitch movement, expected stats",
+    },
+    {
+      label: "FanGraphs",
+      url: "https://www.fangraphs.com/teams/mariners",
+      description: "WAR, wRC+, FIP and depth charts for the whole roster",
+    },
+    {
+      label: "FanGraphs Playoff Odds",
+      url: "https://www.fangraphs.com/standings/playoff-odds",
+      description: "Projected postseason chances, updated daily",
+    },
+    {
+      label: "Baseball Reference",
+      url: "https://www.baseball-reference.com/teams/SEA/{season}.shtml",
+      description: "Season results, splits and game logs",
+    },
+    {
+      label: "Lookout Landing",
+      url: "https://www.lookoutlanding.com/",
+      description: "Mariners-focused analysis and community",
+    },
+  ],
+  seahawks: [
+    {
+      label: "Pro Football Reference",
+      url: "https://www.pro-football-reference.com/teams/sea/{season}.htm",
+      description: "Season results, player stats and game logs",
+    },
+    {
+      label: "NFL Next Gen Stats",
+      url: "https://nextgenstats.nfl.com/",
+      description: "Player tracking: separation, CPOE, rushing over expected",
+    },
+    {
+      label: "Field Gulls",
+      url: "https://www.fieldgulls.com/",
+      description: "Seahawks-focused analysis and community",
+    },
+  ],
+  supersonics: [
+    {
+      label: "Basketball Reference",
+      url: "https://www.basketball-reference.com/teams/SEA/",
+      description: "Complete SuperSonics franchise history, 1967–2008",
+    },
+  ],
+  cougars: [
+    {
+      label: "WSU Athletics",
+      url: "https://wsucougars.com/",
+      description: "Official schedules, rosters and results",
+    },
+    {
+      label: "Sports Reference (College Football)",
+      url: "https://www.sports-reference.com/cfb/schools/washington-state/",
+      description: "Season-by-season results and player stats",
+    },
+  ],
 };
