@@ -141,7 +141,7 @@ export function PlayerSearchClient() {
                             value={playerName}
                             onChange={(e) => setPlayerName(e.target.value)}
                             placeholder={isMLB ? "e.g., Julio Rodriguez" : "e.g., LeBron James"}
-                            className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                            className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--accent-strong)]"
                             required
                         />
                     </div>
@@ -151,7 +151,7 @@ export function PlayerSearchClient() {
                         <select
                             value={league}
                             onChange={(e) => handleLeagueChange(e.target.value as League)}
-                            className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
+                            className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[var(--accent-strong)]"
                         >
                             <option value="mlb">MLB</option>
                             <option value="nba">NBA</option>
@@ -167,7 +167,7 @@ export function PlayerSearchClient() {
                             value={season}
                             onChange={(e) => setSeason(e.target.value)}
                             placeholder={seasonPlaceholder}
-                            className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                            className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--accent-strong)]"
                             required
                         />
                     </div>
@@ -177,7 +177,7 @@ export function PlayerSearchClient() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg disabled:opacity-50 transition-colors"
+                        className="px-6 py-2.5 bg-[var(--accent-strong)] hover:bg-[var(--accent)] text-[var(--accent-ink)] font-semibold rounded-full disabled:opacity-50 transition-colors"
                     >
                         {loading ? "Searching..." : "Search Stats"}
                     </button>
@@ -231,13 +231,13 @@ export function PlayerSearchClient() {
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setViewMode("gamelog")}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${viewMode === "gamelog" ? "bg-blue-600/20 text-blue-400" : "text-gray-400 hover:text-white"}`}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${viewMode === "gamelog" ? "bg-[var(--accent-soft)] text-[var(--accent)]" : "text-gray-400 hover:text-white"}`}
                             >
                                 Game Log
                             </button>
                             <button
                                 onClick={() => setViewMode("raw")}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${viewMode === "raw" ? "bg-blue-600/20 text-blue-400" : "text-gray-400 hover:text-white"}`}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${viewMode === "raw" ? "bg-[var(--accent-soft)] text-[var(--accent)]" : "text-gray-400 hover:text-white"}`}
                             >
                                 Raw JSON
                             </button>
@@ -250,7 +250,7 @@ export function PlayerSearchClient() {
                                     type="date"
                                     value={filterDate}
                                     onChange={(e) => setFilterDate(e.target.value)}
-                                    className="bg-black/50 border border-gray-700 rounded-lg px-2 py-1 text-white text-sm focus:outline-none focus:border-blue-500"
+                                    className="bg-black/50 border border-gray-700 rounded-lg px-2 py-1 text-white text-sm focus:outline-none focus:border-[var(--accent-strong)]"
                                     max={new Date().toISOString().split("T")[0]}
                                 />
                                 {filterDate && (

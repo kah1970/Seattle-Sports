@@ -143,7 +143,7 @@ export default function ImportPage() {
             type="file"
             accept=".csv,.tsv,.txt"
             onChange={handleFileUpload}
-            className="text-sm text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-500/20 file:text-blue-400 hover:file:bg-blue-500/30"
+            className="text-sm text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-[var(--accent-soft)] file:text-[var(--accent)] hover:file:bg-[color:rgba(45,212,191,0.24)]"
           />
         </div>
 
@@ -163,7 +163,7 @@ export default function ImportPage() {
         <button
           onClick={handleImport}
           disabled={loading || !csvText.trim()}
-          className="px-4 py-2 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 rounded-md text-sm font-medium bg-[var(--accent-strong)] text-[var(--accent-ink)] hover:bg-[var(--accent)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {loading ? "Importing..." : "Import Data"}
         </button>
@@ -188,7 +188,7 @@ export default function ImportPage() {
       </div>
 
       <div className="card">
-        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">
+        <h2 className="eyebrow mb-2">
           Supported Formats
         </h2>
         <ul className="text-sm text-gray-400 space-y-1.5">

@@ -128,7 +128,7 @@ export default function ManualInputPage() {
     }
 
     const inputClass =
-        "w-full bg-[#0d1117] border border-[#30363d] rounded-md px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors";
+        "w-full bg-[#0d1117] border border-[#30363d] rounded-md px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[var(--accent-strong)] transition-colors";
     const labelClass = "block text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide";
 
     return (
@@ -239,7 +239,7 @@ export default function ManualInputPage() {
                                     type="button"
                                     onClick={() => toggleTag(tag)}
                                     className={`px-2 py-0.5 rounded-full text-xs transition-colors ${form.tags.includes(tag)
-                                            ? "bg-blue-600 text-white"
+                                            ? "bg-[var(--accent-strong)] text-[var(--accent-ink)]"
                                             : "bg-white/5 text-gray-400 hover:bg-white/10"
                                         }`}
                                 >
@@ -268,7 +268,7 @@ export default function ManualInputPage() {
                                 {form.tags.map((tag) => (
                                     <span
                                         key={tag}
-                                        className="flex items-center gap-1 px-2 py-0.5 bg-blue-600/30 text-blue-300 rounded-full text-xs"
+                                        className="flex items-center gap-1 px-2 py-0.5 bg-[var(--accent-soft)] text-[var(--accent)] rounded-full text-xs"
                                     >
                                         {tag}
                                         <button type="button" onClick={() => toggleTag(tag)} className="hover:text-white">×</button>
@@ -304,7 +304,7 @@ export default function ManualInputPage() {
                     <button
                         type="submit"
                         disabled={status === "loading"}
-                        className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 rounded-md font-medium text-sm transition-colors"
+                        className="w-full py-2.5 bg-[var(--accent-strong)] hover:bg-[var(--accent)] text-[var(--accent-ink)] disabled:opacity-50 rounded-md font-medium text-sm transition-colors"
                     >
                         {status === "loading" ? "Posting…" : "Post to Feed"}
                     </button>

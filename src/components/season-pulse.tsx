@@ -27,7 +27,7 @@ export function SeasonPulse({ pulse }: { pulse: SeasonPulseData | null }) {
   if (!pulse) {
     return (
       <div className="card">
-        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">
+        <h2 className="eyebrow mb-2">
           Season Pulse
         </h2>
         <p className="text-sm text-gray-500">
@@ -77,11 +77,11 @@ export function SeasonPulse({ pulse }: { pulse: SeasonPulseData | null }) {
     <div className="card hover:bg-[var(--card)]" data-testid="season-pulse">
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+          <h2 className="eyebrow">
             {pulse.season} Season Pulse
           </h2>
           <div className="mt-2 flex items-baseline gap-3">
-            <span className="text-3xl font-bold font-mono">
+            <span className="text-4xl font-semibold tracking-tight tabular-nums">
               {pulse.wins}-{pulse.losses}
             </span>
             <span className={`badge ${toneBadge[pulse.verdict.tone]}`}>
@@ -96,11 +96,11 @@ export function SeasonPulse({ pulse }: { pulse: SeasonPulseData | null }) {
 
       <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-md bg-white/5 px-3 py-2">
+          <div key={s.label} className="rounded-xl bg-white/[0.03] px-3 py-2.5 ring-1 ring-inset ring-white/5">
             <div className="text-xs text-gray-500 uppercase tracking-wide truncate">
               {s.label}
             </div>
-            <div className="text-lg font-mono text-gray-100">{s.value}</div>
+            <div className="text-xl font-semibold tabular-nums text-gray-100">{s.value}</div>
             {s.hint && <div className="text-xs text-gray-500">{s.hint}</div>}
           </div>
         ))}
@@ -125,10 +125,10 @@ export function SeasonPulse({ pulse }: { pulse: SeasonPulseData | null }) {
                       }}
                     />
                   </div>
-                  <span className="w-14 text-right font-mono text-gray-300">
+                  <span className="w-14 text-right tabular-nums text-gray-300">
                     {r.value}
                   </span>
-                  <span className={`w-16 text-right font-mono ${style.text}`}>
+                  <span className={`w-16 text-right text-xs font-medium tabular-nums ${style.text}`}>
                     {ordinal(r.rank)}/{r.of}
                   </span>
                 </div>

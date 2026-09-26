@@ -68,7 +68,8 @@ export function AlignmentRating({
         const isActive = effectiveRating === v;
         const isPredicted = !effectiveRating && predictedAlignment === v;
         const isHovered = hoveredDot === v;
-        const baseSize = isCompact ? 10 : 14;
+        // Unrated dots stay small and quiet so they don't compete with headlines
+        const baseSize = isCompact ? 7 : 9;
 
         if (isActive) {
             return {
@@ -99,14 +100,14 @@ export function AlignmentRating({
         }
         if (isHovered) {
             return {
-                backgroundColor: "#9ca3af",
+                backgroundColor: "rgba(255,255,255,0.5)",
                 width: baseSize,
                 height: baseSize,
                 opacity: saving ? 0.5 : 1,
             };
         }
         return {
-            backgroundColor: "#374151",
+            backgroundColor: "rgba(255,255,255,0.14)",
             width: baseSize,
             height: baseSize,
             opacity: saving ? 0.5 : 1,

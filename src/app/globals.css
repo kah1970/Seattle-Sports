@@ -3,13 +3,27 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0e1a;
-  --foreground: #e8eaed;
-  --card: #111827;
-  --card-hover: #1a2332;
-  --border: #1e293b;
-  --muted: #6b7280;
-  --accent: #3b82f6;
+  /* Surfaces: "Puget Sound at night" */
+  --background: #070a12;
+  --foreground: #e6e9ef;
+  --card: #0e131e;
+  --card-hover: #131a28;
+  --surface-2: #151c2b;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --muted: #7b8496;
+
+  /* One accent for every active/selected state */
+  --accent: #5eead4;
+  --accent-strong: #2dd4bf;
+  --accent-soft: rgba(45, 212, 191, 0.14);
+  --accent-ink: #042f2a;
+
+  /* Team colors tuned for a dark background */
+  --team-mariners: #2bb3a8;
+  --team-seahawks: #69be28;
+  --team-supersonics: #ffc200;
+  --team-cougars: #e0485d;
 
   --mariners-primary: #0C2C56;
   --mariners-secondary: #005C5C;
@@ -26,8 +40,23 @@
 
 body {
   color: var(--foreground);
-  background: var(--background);
+  background-color: var(--background);
+  /* faint Sound-teal and Seahawks-navy glows at the top of every page */
+  background-image:
+    radial-gradient(ellipse 80% 50% at 15% -10%, rgba(45, 212, 191, 0.09), transparent 60%),
+    radial-gradient(ellipse 60% 45% at 90% -5%, rgba(29, 66, 138, 0.18), transparent 60%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.015em;
+}
+
+::selection {
+  background: rgba(45, 212, 191, 0.3);
 }
 
 @layer utilities {
@@ -38,43 +67,63 @@ body {
 
 @layer components {
   .card {
-    @apply bg-[var(--card)] border border-[var(--border)] rounded-lg p-4 transition-colors hover:bg-[var(--card-hover)];
+    @apply rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 transition-all duration-200;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  a:hover > .card,
+  .group:hover > .card,
+  a.card:hover {
+    @apply border-[var(--border-strong)] bg-[var(--card-hover)];
+    transform: translateY(-1px);
+  }
+
+  /* Small spaced-capitals label used for section titles */
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)];
+  }
+
+  /* Filter chips: every selectable pill in the app */
+  .chip {
+    @apply inline-flex items-center whitespace-nowrap rounded-full border border-transparent px-3 py-1 text-xs font-medium text-gray-400 transition-colors hover:bg-white/5 hover:text-gray-200;
+  }
+  .chip-active {
+    @apply border-[color:rgba(45,212,191,0.35)] bg-[var(--accent-soft)] text-[var(--accent)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)];
   }
 
   .badge {
-    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset;
   }
 
   .badge-news {
-    @apply bg-blue-500/20 text-blue-400;
+    @apply bg-blue-500/10 text-blue-400 ring-blue-400/20;
   }
 
   .badge-analysis {
-    @apply bg-purple-500/20 text-purple-400;
+    @apply bg-purple-500/10 text-purple-400 ring-purple-400/20;
   }
 
   .badge-opinion {
-    @apply bg-amber-500/20 text-amber-400;
+    @apply bg-amber-500/10 text-amber-400 ring-amber-400/20;
   }
 
   .badge-highlights {
-    @apply bg-green-500/20 text-green-400;
+    @apply bg-green-500/10 text-green-400 ring-green-400/20;
   }
 
   .badge-retrospective {
-    @apply bg-rose-500/20 text-rose-400;
+    @apply bg-rose-500/10 text-rose-400 ring-rose-400/20;
   }
 
   .badge-spring-training {
-    @apply bg-sky-500/20 text-sky-400;
+    @apply bg-sky-500/10 text-sky-400 ring-sky-400/20;
   }
 
   .badge-roster-move {
-    @apply bg-orange-500/20 text-orange-400;
+    @apply bg-orange-500/10 text-orange-400 ring-orange-400/20;
   }
 
   .badge-prospects {
-    @apply bg-teal-500/20 text-teal-400;
+    @apply bg-teal-500/10 text-teal-400 ring-teal-400/20;
   }
 
   /* Rendered HTML content from RSS feeds */

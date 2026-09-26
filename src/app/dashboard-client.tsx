@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { ArticleCard } from "@/components/article-card";
 import { TeamStatusStrip } from "@/components/team-status-strip";
+import { SectionHeader } from "@/components/section-header";
 import type { TeamStatus } from "@/lib/team-status";
 import { StatNuggetCard } from "@/components/stat-nugget-card";
 import { StatNuggetData } from "@/lib/types";
@@ -98,74 +99,79 @@ export function DashboardClient({ data }: { data: DashboardData }) {
   const latest = filteredArticles.slice(5, 16);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Seattle Sports</h1>
-          <p className="text-sm text-gray-500 mt-1">{data.today}</p>
-        </div>
-      </div>
+    <div className="space-y-8">
+      {/* Masthead */}
+      <header className="pt-2">
+        <p className="eyebrow">{data.today}</p>
+        <h1 className="mt-2 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+          Seattle Sports
+        </h1>
+        <p className="mt-2 max-w-xl text-[15px] text-gray-400">
+          Scores, standings and the stories behind them, for every team in town.
+        </p>
+      </header>
 
       {/* Scoreboard: every team's record, status and next game */}
       <TeamStatusStrip teams={data.teams} />
 
-      {/* Team Tabs */}
-      <div className="flex gap-1 overflow-x-auto border-b border-[var(--border)] pb-px">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2 text-sm font-medium whitespace-nowrap rounded-t-md transition-colors ${activeTab === tab.key
-              ? "bg-[var(--card)] text-white border-b-2 border-blue-500"
-              : "text-gray-400 hover:text-gray-200 hover:bg-white/5"
+      {/* Team tabs + filters */}
+      <div className="flex flex-col gap-3 border-y border-[var(--border)] py-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="-mx-1 flex gap-1 overflow-x-auto px-1 [scrollbar-width:none]" role="tablist">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              role="tab"
+              aria-selected={activeTab === tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                activeTab === tab.key
+                  ? "bg-white/[0.08] text-white"
+                  : "text-gray-400 hover:bg-white/5 hover:text-gray-200"
               }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Time-window + Alignment filters */}
-      <div className="flex items-center gap-4 flex-wrap">
-        <div className="flex items-center gap-1 flex-wrap">
-          <span className="text-xs text-gray-500 mr-2 shrink-0">Show:</span>
-          {timeWindows.map((tw) => (
-            <button
-              key={tw.key}
-              onClick={() => setTimeWindow(tw.key)}
-              className={`px-3 py-1 text-xs font-medium whitespace-nowrap rounded-full transition-colors ${timeWindow === tw.key
-                ? "bg-blue-600 text-white"
-                : "bg-white/5 text-gray-400 hover:text-gray-200 hover:bg-white/10"
-                }`}
             >
-              {tw.label}
+              {tab.key !== "all" && (
+                <span
+                  className="h-2 w-2 rounded-full"
+                  style={{ background: `var(--team-${tab.key})` }}
+                  aria-hidden="true"
+                />
+              )}
+              {tab.label}
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-1">
-          <span className="text-xs text-gray-500 mr-2 shrink-0">Alignment:</span>
-          {(["all", "aligned", "unrated"] as AlignmentFilter[]).map((f) => (
-            <button
-              key={f}
-              onClick={() => setAlignmentFilter(f)}
-              className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${alignmentFilter === f
-                ? "bg-green-600 text-white"
-                : "bg-white/5 text-gray-400 hover:text-gray-200 hover:bg-white/10"
-                }`}
-            >
-              {f === "all" ? "All" : f === "aligned" ? "Aligned (2-3)" : "Unrated"}
-            </button>
-          ))}
+
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div className="flex flex-wrap items-center gap-1">
+            {timeWindows.map((tw) => (
+              <button
+                key={tw.key}
+                onClick={() => setTimeWindow(tw.key)}
+                className={`chip ${timeWindow === tw.key ? "chip-active" : ""}`}
+              >
+                {tw.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-1">
+            <span className="mr-1 text-xs text-gray-500">Alignment</span>
+            {(["all", "aligned", "unrated"] as AlignmentFilter[]).map((f) => (
+              <button
+                key={f}
+                onClick={() => setAlignmentFilter(f)}
+                className={`chip ${alignmentFilter === f ? "chip-active" : ""}`}
+              >
+                {f === "all" ? "All" : f === "aligned" ? "Aligned (2-3)" : "Unrated"}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Top Stories: the lead story runs full width */}
         <div className="lg:col-span-2">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
-            Top Stories
-          </h2>
+          <SectionHeader title="Top Stories" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {topStories.map((article, i) => (
               <div key={article.id} className={i === 0 ? "md:col-span-2" : undefined}>
@@ -177,9 +183,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
 
         {/* Stat Nuggets */}
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
-            Stat of the Day
-          </h2>
+          <SectionHeader title="Stat of the Day" />
           {filteredNuggets.map((nugget) => (
             <StatNuggetCard key={nugget.teamSlug} {...nugget} />
           ))}
@@ -188,14 +192,14 @@ export function DashboardClient({ data }: { data: DashboardData }) {
 
       {/* Latest Feed */}
       <div>
-        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
-          Latest
-        </h2>
-        <div className="space-y-1">
-          {latest.map((article) => (
-            <ArticleCard key={article.id} {...article} compact />
-          ))}
-        </div>
+        <SectionHeader title="Latest" />
+        {latest.length > 0 && (
+          <div className="card divide-y divide-white/[0.05] p-1.5">
+            {latest.map((article) => (
+              <ArticleCard key={article.id} {...article} compact />
+            ))}
+          </div>
+        )}
         {filteredArticles.length === 0 && (
           <div className="py-6 text-center">
             <p className="text-sm text-gray-400 mb-2">
@@ -204,7 +208,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
             {timeWindow !== "all" && (
               <button
                 onClick={expandToNext}
-                className="text-sm text-blue-400 hover:text-blue-300 underline"
+                className="text-sm text-[var(--accent)] hover:text-[var(--accent-strong)] underline"
               >
                 Expand to next time range →
               </button>

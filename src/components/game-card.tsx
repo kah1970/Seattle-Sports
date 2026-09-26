@@ -53,10 +53,7 @@ export function GameCard({
     : format(date, "EEE, MMM d");
 
   return (
-    <div
-      className="card min-w-[220px]"
-      style={{ borderLeft: `3px solid ${borderColor}` }}
-    >
+    <div className="card min-w-[220px]">
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs text-gray-500 uppercase tracking-wider">
           {dateStr}
@@ -93,7 +90,7 @@ export function GameCard({
           <span className="text-sm">{isHome ? opponent : teamName}</span>
           {/* First row is always the away team, second the home team */}
           {isFinal && (
-            <span className="text-sm font-mono tabular-nums">
+            <span className="text-sm font-semibold tabular-nums">
               {awayScore}
             </span>
           )}
@@ -106,7 +103,7 @@ export function GameCard({
             {isHome && " (H)"}
           </span>
           {isFinal && (
-            <span className="text-sm font-mono tabular-nums">
+            <span className="text-sm font-semibold tabular-nums">
               {homeScore}
             </span>
           )}

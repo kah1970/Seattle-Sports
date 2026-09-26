@@ -107,7 +107,7 @@ export default async function DigestPage() {
               No recent articles in the last 7 days.{" "}
               <a
                 href="/api/cron/refresh"
-                className="text-blue-400 hover:underline"
+                className="text-[var(--accent)] hover:underline"
               >
                 Refresh feeds →
               </a>

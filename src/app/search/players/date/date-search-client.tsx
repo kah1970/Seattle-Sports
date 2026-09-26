@@ -126,7 +126,7 @@ export function DateSearchClient() {
                             value={playerName}
                             onChange={(e) => setPlayerName(e.target.value)}
                             placeholder="e.g., LeBron James"
-                            className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                            className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--accent-strong)]"
                             required
                         />
                     </div>
@@ -138,7 +138,7 @@ export function DateSearchClient() {
                             value={season}
                             onChange={(e) => setSeason(e.target.value)}
                             placeholder="2025-26"
-                            className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                            className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--accent-strong)]"
                             required
                         />
                     </div>
@@ -149,7 +149,7 @@ export function DateSearchClient() {
                             type="date"
                             value={searchDate}
                             onChange={(e) => setSearchDate(e.target.value)}
-                            className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                            className="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--accent-strong)]"
                             required
                             max={new Date().toISOString().split("T")[0]}
                         />
@@ -160,7 +160,7 @@ export function DateSearchClient() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg disabled:opacity-50 transition-colors"
+                        className="px-6 py-2.5 bg-[var(--accent-strong)] hover:bg-[var(--accent)] text-[var(--accent-ink)] font-semibold rounded-full disabled:opacity-50 transition-colors"
                     >
                         {loading ? "Searching..." : "Find Game Stats"}
                     </button>

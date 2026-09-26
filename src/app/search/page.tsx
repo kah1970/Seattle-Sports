@@ -75,7 +75,7 @@ export default function SearchPage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search articles, players, topics..."
-          className="flex-1 min-w-[200px] px-4 py-2 rounded-lg bg-[var(--card)] border border-[var(--border)] text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+          className="flex-1 min-w-[200px] px-4 py-2 rounded-lg bg-[var(--card)] border border-[var(--border)] text-gray-200 placeholder-gray-500 focus:outline-none focus:border-[var(--accent-strong)]"
         />
         <select
           value={team}

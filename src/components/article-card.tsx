@@ -30,11 +30,27 @@ const typeColors: Record<string, string> = {
   retrospective: "badge-retrospective",
 };
 
-const teamAccents: Record<string, string> = {
-  mariners: "border-l-teal-600",
-  seahawks: "border-l-green-500",
-  supersonics: "border-l-yellow-500",
+const teamColors: Record<string, string> = {
+  mariners: "var(--team-mariners)",
+  seahawks: "var(--team-seahawks)",
+  supersonics: "var(--team-supersonics)",
+  cougars: "var(--team-cougars)",
 };
+
+function TeamTag({ team }: { team: { name: string; slug: string } }) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span
+        className="h-1.5 w-1.5 rounded-full"
+        style={{ background: teamColors[team.slug] ?? "var(--muted)" }}
+        aria-hidden="true"
+      />
+      {team.name.replace(/^Seattle /, "")}
+    </span>
+  );
+}
+
+const Dot = () => <span className="text-gray-700" aria-hidden="true">·</span>;
 
 export function ArticleCard({
   id,
@@ -64,16 +80,16 @@ export function ArticleCard({
   if (compact) {
     return (
       <Link href={`/article/${id}`} className="block group">
-        <div
-          className={`flex items-start gap-3 py-3 px-3 rounded-lg hover:bg-[var(--card-hover)] transition-colors border-l-2 ${teamAccents[team.slug] || "border-l-gray-600"}`}
-        >
+        <div className="flex items-start gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-white/[0.03]">
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-medium text-gray-200 group-hover:text-white truncate">
+            <h3 className="truncate text-[15px] font-medium text-gray-200 group-hover:text-white">
               {title}
             </h3>
-            <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+            <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-500">
+              <TeamTag team={team} />
+              <Dot />
               <span>{publisher}</span>
-              <span>-</span>
+              <Dot />
               <span>{timeAgo}</span>
               <span className={`badge ${typeColors[articleType] || "badge-news"}`}>
                 {articleType}
@@ -90,9 +106,7 @@ export function ArticleCard({
 
   return (
     <Link href={`/article/${id}`} className="block group">
-      <div
-        className={`card border-l-2 ${teamAccents[team.slug] || "border-l-gray-600"}`}
-      >
+      <div className="card h-full">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className={`badge ${typeColors[articleType] || "badge-news"}`}>
@@ -103,7 +117,7 @@ export function ArticleCard({
                 video
               </span>
             )}
-            <span className="text-xs text-gray-500">{depthLabel}</span>
+            <span className="text-[11px] text-gray-500">{depthLabel}</span>
           </div>
           <div className="flex items-center gap-2">
             <AlignmentRating articleId={id} alignment={alignment ?? null} predictedAlignment={predictedAlignment} />
@@ -115,22 +129,22 @@ export function ArticleCard({
           </div>
         </div>
 
-        <h3 className="mt-2 text-base font-semibold text-gray-100 group-hover:text-white line-clamp-2">
+        <h3 className="mt-3 text-[17px] font-semibold leading-snug text-gray-50 line-clamp-2 group-hover:text-white">
           {title}
         </h3>
 
         {summary && (
-          <p className="mt-1.5 text-sm text-gray-400 line-clamp-2">
+          <p className="mt-1.5 text-sm leading-relaxed text-gray-400 line-clamp-2">
             {summary}
           </p>
         )}
 
-        <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+        <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-500">
+          <TeamTag team={team} />
+          <Dot />
           <span className="font-medium text-gray-400">{publisher}</span>
-          <span>-</span>
+          <Dot />
           <time>{timeAgo}</time>
-          <span>-</span>
-          <span>{team.name}</span>
           <div className="ml-auto">
             <DepthBar depth={analysisDepth} />
           </div>
@@ -148,7 +162,7 @@ function DepthBar({ depth }: { depth: number }) {
       {Array.from({ length: bars }).map((_, i) => (
         <div
           key={i}
-          className={`w-1 rounded-sm ${i < filled ? "bg-purple-500" : "bg-gray-700"
+          className={`w-1 rounded-sm ${i < filled ? "bg-[var(--accent-strong)]" : "bg-white/10"
             }`}
           style={{ height: `${((i + 1) / bars) * 100}%` }}
         />

@@ -169,7 +169,7 @@ export function ArticleDeepDive({
           )}
         </div>
 
-        <h1 className="text-2xl font-bold leading-tight">{article.title}</h1>
+        <h1 className="text-3xl sm:text-4xl font-semibold leading-tight tracking-tight text-balance text-white">{article.title}</h1>
 
         <div className="flex items-center gap-4 text-sm text-gray-400">
           <span className="font-medium">{article.publisher}</span>
@@ -192,7 +192,7 @@ export function ArticleDeepDive({
           href={article.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="px-3 py-1.5 rounded-md text-sm font-medium bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors"
+          className="px-3 py-1.5 rounded-md text-sm font-medium bg-[var(--accent-soft)] text-[var(--accent)] hover:bg-[color:rgba(45,212,191,0.24)] transition-colors"
         >
           Read Original
         </a>
@@ -213,7 +213,7 @@ export function ArticleDeepDive({
       {/* Summary */}
       {article.summary && (
         <div className="card">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">
+          <h2 className="eyebrow mb-2">
             Summary
           </h2>
           <p className="text-gray-300 leading-relaxed">{article.summary}</p>
@@ -223,7 +223,7 @@ export function ArticleDeepDive({
       {/* Content */}
       {article.content && article.content !== article.summary && (
         <div className="card">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
+          <h2 className="eyebrow mb-3">
             Story Content
           </h2>
           {article.content.includes("<") ? (
@@ -240,14 +240,14 @@ export function ArticleDeepDive({
       )}
 
       {/* Why This Matters */}
-      <div className="card border-l-2 border-l-blue-500">
-        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">
+      <div className="card border-l-2 border-l-[var(--accent-strong)]">
+        <h2 className="eyebrow mb-2">
           Why This Matters
         </h2>
         <ul className="space-y-2">
           {whyMatters.map((bullet, i) => (
             <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
-              <span className="text-blue-400 mt-0.5 shrink-0">-</span>
+              <span className="text-[var(--accent)] mt-0.5 shrink-0">-</span>
               {bullet}
             </li>
           ))}
@@ -256,7 +256,7 @@ export function ArticleDeepDive({
 
       {/* Attribution */}
       <div className="card bg-[var(--background)] border-dashed">
-        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">
+        <h2 className="eyebrow mb-2">
           Attribution
         </h2>
         <div className="text-sm text-gray-400 space-y-1">
@@ -279,7 +279,7 @@ export function ArticleDeepDive({
               href={article.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-400 hover:underline break-all"
+              className="text-[var(--accent)] hover:underline break-all"
             >
               {article.url}
             </a>
@@ -305,7 +305,7 @@ export function ArticleDeepDive({
       {/* Related */}
       {related.length > 0 && (
         <div>
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
+          <h2 className="eyebrow mb-3">
             Related
           </h2>
           <div className="space-y-2">

@@ -22,7 +22,7 @@ export default async function AdminPage() {
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
         <Link
           href="/admin/import"
-          className="px-3 py-1.5 rounded-md text-sm font-medium bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors"
+          className="px-3 py-1.5 rounded-md text-sm font-medium bg-[var(--accent-soft)] text-[var(--accent)] hover:bg-[color:rgba(45,212,191,0.24)] transition-colors"
         >
           Import Data
         </Link>
@@ -130,7 +130,7 @@ export default async function AdminPage() {
 
       {/* Cron Info */}
       <div className="card">
-        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">
+        <h2 className="eyebrow mb-2">
           Cron Refresh Endpoint
         </h2>
         <p className="text-sm text-gray-300 font-mono">

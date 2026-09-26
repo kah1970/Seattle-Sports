@@ -5,7 +5,7 @@ export function GoDeeper({ links }: { links: ResearchLink[] }) {
 
   return (
     <div className="card hover:bg-[var(--card)]" data-testid="go-deeper">
-      <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
+      <h2 className="eyebrow mb-3">
         Go Deeper
       </h2>
       <ul className="space-y-2">
@@ -17,7 +17,7 @@ export function GoDeeper({ links }: { links: ResearchLink[] }) {
               rel="noopener noreferrer"
               className="group block rounded-md px-2 py-1.5 -mx-2 hover:bg-white/5 transition-colors"
             >
-              <span className="text-sm font-medium text-blue-400 group-hover:underline">
+              <span className="text-sm font-medium text-[var(--accent)] group-hover:underline">
                 {link.label} ↗
               </span>
               <span className="block text-xs text-gray-500">

@@ -50,20 +50,18 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ title, subtitle, icon, accentColor, count }: SectionHeaderProps) {
   return (
-    <div className="flex items-center gap-2 mb-3">
+    <div className="mb-3 flex items-center gap-2">
       {icon && icons[icon] && (
-        <span style={{ color: accentColor ?? "#6b7280" }}>{icons[icon]}</span>
+        <span style={{ color: accentColor ?? "var(--muted)" }}>{icons[icon]}</span>
       )}
-      <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
-        {title}
-      </h2>
+      <h2 className="eyebrow">{title}</h2>
       {count !== undefined && (
-        <span className="text-xs text-gray-600 font-normal">({count})</span>
+        <span className="rounded-full bg-white/5 px-1.5 py-px text-[10px] font-medium tabular-nums text-gray-400">
+          {count}
+        </span>
       )}
-      {subtitle && (
-        <span className="text-xs text-gray-600 font-normal ml-auto">{subtitle}</span>
-      )}
-      <div className="flex-1 h-px ml-2" style={{ background: `${accentColor ?? "#374151"}40` }} />
+      <div className="ml-2 h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
+      {subtitle && <span className="text-xs font-normal text-gray-500">{subtitle}</span>}
     </div>
   );
 }

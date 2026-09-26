@@ -6,42 +6,37 @@ interface StatNuggetCardProps {
   teamSlug: string;
 }
 
-const categoryIcons: Record<string, string> = {
-  fun_fact: "?",
-  milestone: "!",
-  trend: "~",
-  comparison: "vs",
+const categoryLabels: Record<string, string> = {
+  fun_fact: "Fun fact",
+  milestone: "Milestone",
+  trend: "Trend",
+  comparison: "Comparison",
 };
 
-const sportColors: Record<string, string> = {
-  MLB: "from-teal-600/20 to-blue-600/20 border-teal-700/30",
-  NFL: "from-green-600/20 to-blue-600/20 border-green-700/30",
-  NBA: "from-yellow-600/20 to-blue-600/20 border-yellow-700/30",
+const teamNames: Record<string, string> = {
+  mariners: "Mariners",
+  seahawks: "Seahawks",
+  supersonics: "SuperSonics",
+  cougars: "Cougars",
 };
 
-export function StatNuggetCard({
-  title,
-  body,
-  category,
-  sport,
-}: StatNuggetCardProps) {
+export function StatNuggetCard({ title, body, category, sport, teamSlug }: StatNuggetCardProps) {
   return (
-    <div
-      className={`rounded-lg border p-4 bg-gradient-to-br ${sportColors[sport] || "from-gray-600/20 to-gray-700/20 border-gray-700/30"}`}
-    >
-      <div className="flex items-center gap-2 mb-2">
-        <span className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white/70">
-          {categoryIcons[category] || "i"}
+    <div className="card relative overflow-hidden">
+      {/* thin team-color rule down the left edge */}
+      <span
+        className="absolute inset-y-4 left-0 w-0.5 rounded-full"
+        style={{ background: `var(--team-${teamSlug}, var(--accent))` }}
+        aria-hidden="true"
+      />
+      <div className="flex items-center justify-between gap-2 pl-2">
+        <span className="eyebrow" style={{ color: `var(--team-${teamSlug}, var(--muted))` }}>
+          {teamNames[teamSlug] ?? sport}
         </span>
-        <div>
-          <span className="text-xs uppercase tracking-wider text-gray-400">
-            Stat Nugget
-          </span>
-          <span className="text-xs text-gray-600 ml-2">{sport}</span>
-        </div>
+        <span className="text-[11px] text-gray-500">{categoryLabels[category] ?? category}</span>
       </div>
-      <h3 className="text-sm font-semibold text-white mb-1">{title}</h3>
-      <p className="text-sm text-gray-300 leading-relaxed">{body}</p>
+      <h3 className="mt-2 pl-2 text-[15px] font-semibold leading-snug text-white">{title}</h3>
+      <p className="mt-1.5 pl-2 text-sm leading-relaxed text-gray-400">{body}</p>
     </div>
   );
 }

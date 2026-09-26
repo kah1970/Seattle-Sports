@@ -188,13 +188,13 @@ export function TeamPageClient({ data }: { data: TeamPageData }) {
   const pitchingGroup = liveStats?.leaders?.find((g) => g.category === "Pitching");
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Team Header Banner */}
       <div
-        className="rounded-xl p-6 border overflow-hidden relative"
+        className="relative overflow-hidden rounded-2xl border p-6 sm:p-8"
         style={{
-          borderColor: teamConfig.colorSecondary + "50",
-          background: `linear-gradient(135deg, ${teamConfig.colorPrimary}50 0%, ${teamConfig.colorSecondary}20 100%)`,
+          borderColor: "var(--border)",
+          background: `radial-gradient(ellipse 60% 90% at 100% 0%, color-mix(in srgb, var(--team-${teamConfig.slug}) 22%, transparent), transparent 70%), linear-gradient(135deg, ${teamConfig.colorPrimary}66 0%, var(--card) 70%)`,
         }}
       >
         <div className="flex items-center gap-6">
@@ -226,8 +226,8 @@ export function TeamPageClient({ data }: { data: TeamPageData }) {
             <div className="hidden md:flex flex-col items-end gap-1 shrink-0 text-right">
               <div className="flex items-baseline gap-2">
                 <span
-                  className="text-3xl font-bold tabular-nums"
-                  style={{ color: teamConfig.colorSecondary }}
+                  className="text-4xl font-semibold tracking-tight tabular-nums"
+                  style={{ color: `var(--team-${teamConfig.slug}, white)` }}
                 >
                   {header.record}
                 </span>
@@ -279,12 +279,9 @@ export function TeamPageClient({ data }: { data: TeamPageData }) {
               <button
                 key={t}
                 onClick={() => setTypeFilter(t)}
-                className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${typeFilter === t
-                  ? "bg-blue-500/20 text-blue-400"
-                  : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
-                  }`}
+                className={`chip ${typeFilter === t ? "chip-active" : ""}`}
               >
-                {t === "all" ? "All" : t.charAt(0).toUpperCase() + t.slice(1)}
+                {t === "all" ? "All" : (t.charAt(0).toUpperCase() + t.slice(1)).replace("-", " ")}
               </button>
             )
           )}
@@ -294,25 +291,19 @@ export function TeamPageClient({ data }: { data: TeamPageData }) {
             <button
               key={t}
               onClick={() => setTimeFilter(t)}
-              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${timeFilter === t
-                ? "bg-green-500/20 text-green-400"
-                : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
-                }`}
+              className={`chip ${timeFilter === t ? "chip-active" : ""}`}
             >
               {t === "all" ? "All time" : t}
             </button>
           ))}
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-xs text-gray-500 mr-1 shrink-0">Alignment:</span>
+          <span className="text-xs text-gray-500 mr-1 shrink-0">Alignment</span>
           {(["all", "aligned", "unrated"] as AlignmentFilter[]).map((f) => (
             <button
               key={f}
               onClick={() => setAlignmentFilter(f)}
-              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${alignmentFilter === f
-                ? "bg-green-500/20 text-green-400"
-                : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
-                }`}
+              className={`chip ${alignmentFilter === f ? "chip-active" : ""}`}
             >
               {f === "all" ? "All" : f === "aligned" ? "Aligned (2-3)" : "Unrated"}
             </button>

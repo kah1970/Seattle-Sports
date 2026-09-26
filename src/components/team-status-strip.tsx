@@ -21,12 +21,12 @@ export function TeamStatusStrip({ teams }: { teams: TeamStatus[] }) {
           <Link
             key={t.slug}
             href={`/team/${t.slug}`}
-            className="group relative w-[78%] shrink-0 snap-start overflow-hidden rounded-xl sm:w-auto border border-[var(--border)] bg-[var(--card)] p-4 transition-colors hover:bg-[var(--card-hover)]"
+            className="group relative w-[78%] shrink-0 snap-start overflow-hidden rounded-2xl sm:w-auto border border-[var(--border)] bg-[var(--card)] p-4 transition-all duration-200 hover:-translate-y-px hover:border-[var(--border-strong)] hover:bg-[var(--card-hover)]"
           >
-            {/* team-color accent */}
+            {/* team-color glow in the corner */}
             <span
-              className="absolute inset-x-0 top-0 h-1"
-              style={{ background: t.colorSecondary }}
+              className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-25 blur-2xl"
+              style={{ background: `var(--team-${t.slug})` }}
               aria-hidden="true"
             />
             <div className="flex items-center gap-3">
@@ -47,7 +47,7 @@ export function TeamStatusStrip({ teams }: { teams: TeamStatus[] }) {
               <span
                 className={
                   isRecord
-                    ? "text-2xl font-bold tabular-nums text-white"
+                    ? "text-3xl font-semibold tracking-tight tabular-nums text-white"
                     : "text-base font-semibold text-gray-100"
                 }
               >
