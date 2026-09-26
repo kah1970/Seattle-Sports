@@ -225,19 +225,32 @@ async function main() {
     },
   ];
 
-  for (const article of sampleArticles) {
-    await prisma.article.upsert({
-      where: { urlHash: article.urlHash },
-      update: { publishedAt: article.publishedAt },
-      create: article,
+  // Sample articles are made up (their links don't work), so they're only
+  // added on request — e.g. for a demo with no internet. Otherwise any
+  // left over from earlier seeds are removed so they can't pose as news.
+  const includeSamples = process.env.SEED_SAMPLE_ARTICLES === "true";
+  if (includeSamples) {
+    for (const article of sampleArticles) {
+      await prisma.article.upsert({
+        where: { urlHash: article.urlHash },
+        update: { publishedAt: article.publishedAt },
+        create: article,
+      });
+    }
+  } else {
+    const samples = { article: { urlHash: { startsWith: "seed-" } } };
+    await prisma.bookmark.deleteMany({ where: samples });
+    const removed = await prisma.article.deleteMany({
+      where: { urlHash: { startsWith: "seed-" } },
     });
+    if (removed.count > 0) console.log(`Removed ${removed.count} sample article(s).`);
   }
 
   // Seed tags
   const tagNames = [
     "julio-rodriguez", "cal-raleigh", "george-kirby", "logan-gilbert",
     "colt-emerson", "lazaro-montes", "bryan-woo", "bryce-miller",
-    "dk-metcalf", "geno-smith", "devon-witherspoon", "kenneth-walker",
+    "devon-witherspoon",
     "gary-payton", "expansion",
     "trades", "injuries", "draft", "playoffs", "spring-training",
     "roster-move", "prospects", "rotation", "bullpen",
@@ -297,12 +310,18 @@ async function main() {
     },
   ];
 
-  for (const game of games) {
-    await prisma.gameSchedule.upsert({
-      where: { externalId: game.externalId },
-      update: {},
-      create: game,
-    });
+  // Sample games are dated relative to "now", so they'd pose as real
+  // upcoming games; same opt-in as the sample articles.
+  if (includeSamples) {
+    for (const game of games) {
+      await prisma.gameSchedule.upsert({
+        where: { externalId: game.externalId },
+        update: {},
+        create: game,
+      });
+    }
+  } else {
+    await prisma.gameSchedule.deleteMany({ where: { externalId: { startsWith: "seed-" } } });
   }
 
   // Seed sample metrics (2025 season)
@@ -320,22 +339,33 @@ async function main() {
     { name: "qbr", value: 61.4, category: "passing", playerName: "Geno Smith", teamId: seahawks.id, season: "2025" },
     { name: "recv_yards", value: 1105, category: "receiving", playerName: "DK Metcalf", teamId: seahawks.id, season: "2025" },
     { name: "recv_td", value: 9, category: "receiving", playerName: "DK Metcalf", teamId: seahawks.id, season: "2025" },
-    { name: "rush_yards", value: 603, category: "rushing", playerName: "Kenneth Walker III", teamId: seahawks.id, season: "2025" },
     { name: "ppg", value: 20.3, category: "historic", playerName: "Gary Payton", teamId: supersonics.id, season: "1999-00" },
     { name: "ppg", value: 17.8, category: "historic", playerName: "Shawn Kemp", teamId: supersonics.id, season: "1995-96" },
     { name: "ppg", value: 25.1, category: "historic", playerName: "Ray Allen", teamId: supersonics.id, season: "2006-07" },
   ];
 
+  // Sample stats are placeholders too, so they follow the same opt-in.
+  // Clear earlier copies first (metrics have no unique key, so re-seeding
+  // used to add a duplicate set every time).
   for (const metric of sampleMetrics) {
-    await prisma.metric.create({ data: metric }).catch(() => {/* skip duplicates */ });
+    await prisma.metric.deleteMany({
+      where: {
+        datasetId: null,
+        name: metric.name,
+        playerName: metric.playerName,
+        value: metric.value,
+        season: metric.season,
+      },
+    });
+    if (includeSamples) await prisma.metric.create({ data: metric });
   }
 
   console.log("Seed complete!");
   console.log(`  Teams: 3`);
   console.log(`  Sources: ${sources.length}`);
-  console.log(`  Articles: ${sampleArticles.length}`);
-  console.log(`  Games: ${games.length}`);
-  console.log(`  Metrics: ${sampleMetrics.length}`);
+  console.log(`  Sample articles: ${includeSamples ? sampleArticles.length : 0}`);
+  console.log(`  Sample games: ${includeSamples ? games.length : 0}`);
+  console.log(`  Sample metrics: ${includeSamples ? sampleMetrics.length : 0}`);
 }
 
 main()

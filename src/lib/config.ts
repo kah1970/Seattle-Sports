@@ -35,8 +35,12 @@ export const TEAMS = {
         "Jaxon Smith-Njigba: 1,793 receiving yards, NFL Offensive Player of the Year",
         "Devon Witherspoon: PFF 91.2, top corner in the NFC",
       ],
-      // Drop your own photos in public/champions/ and list them here, e.g.
-      // photos: [{ src: "/champions/trophy.jpg", alt: "Lombardi Trophy" }],
+      // Save photos as public/champions/trophy.jpg and ring.jpg (.png/.webp
+      // also work). Any that are missing fall back to the built-in artwork.
+      photos: [
+        { src: "/champions/trophy", alt: "The Seahawks' Super Bowl LX Lombardi Trophy" },
+        { src: "/champions/ring", alt: "Seahawks Super Bowl LX championship ring" },
+      ],
     },
     season2025: {
       label: "2026",
@@ -272,7 +276,7 @@ export const RSS_SOURCES: RSSSourceConfig[] = [
  */
 export const TEAM_KEYWORDS: Record<string, string[]> = {
   mariners: ["mariners", "m's", "t-mobile park", "julio rodriguez", "julio rodríguez", "cal raleigh", "logan gilbert", "george kirby", "luis castillo", "bryan woo", "bryce miller"],
-  seahawks: ["seahawks", "lumen field", "sam darnold", "smith-njigba", "devon witherspoon", "kenneth walker", "cooper kupp", "mike macdonald"],
+  seahawks: ["seahawks", "lumen field", "sam darnold", "smith-njigba", "devon witherspoon", "cooper kupp", "mike macdonald"],
   supersonics: ["supersonics", "sonics", "seattle nba", "nba expansion", "nba seattle", "climate pledge arena", "key arena", "keyarena", "bring back the sonics", "expansion bid"],
   cougars: ["wsu", "washington state", "cougars", "pullman", "coug", "cougs"],
 };

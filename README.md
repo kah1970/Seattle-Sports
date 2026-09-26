@@ -148,6 +148,14 @@ The Mariners page header and **Season Pulse** panel come live from the public ML
 
 Every team page has a **Go Deeper** panel of research links, configured in `RESEARCH_LINKS` in `src/lib/config.ts`. Set `MLB_STATS_API_BASE` to point Season Pulse at a local mock.
 
+## Championship Banner Photos
+
+The Seahawks page shows a Super Bowl LX banner with built-in trophy and ring artwork. To use real photos, save them as `public/champions/trophy.jpg` and `public/champions/ring.jpg` (`.png` or `.webp` also work); the page picks them up automatically. Use photos you have the rights to if this repo is public.
+
+## Sample Data
+
+`npm run db:seed` sets up teams and sources only, and removes any sample articles, games and stats left from earlier seeds (they're made up and would pose as real news). For demos or the Playwright tests, use `npm run db:seed:samples` instead.
+
 ## Cleaning Up Off-Topic Articles
 
 Articles are assigned to a team only if they mention it (whole-word match on `TEAM_KEYWORDS`). To remove articles stored before that rule existed:
@@ -174,6 +182,7 @@ The UI provides a slider ("More breaking" vs "More analysis") that adjusts recen
 npm test
 
 # E2E tests (starts dev server automatically)
+npm run db:seed:samples   # e2e tests need the sample articles
 npm run test:e2e
 ```
 

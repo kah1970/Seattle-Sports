@@ -59,11 +59,6 @@ const SEAHAWKS_NUGGETS: Omit<StatNuggetData, "teamSlug" | "sport">[] = [
     body: "Seattle averaged 5.1 more points per game at home during the 2025 regular season \u2014 Lumen Field's crowd noise remains one of the NFL's most measured home-field advantages.",
     category: "fun_fact",
   },
-  {
-    title: "Walker's Return",
-    body: "Kenneth Walker III enters 2026 healthy after an injury-shortened 2025. In the games he did play, he averaged 4.8 yards per carry \u2014 his best mark since his rookie season.",
-    category: "trend",
-  },
 ];
 
 const SONICS_NUGGETS: Omit<StatNuggetData, "teamSlug" | "sport">[] = [

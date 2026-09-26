@@ -13,7 +13,8 @@ describe("mentionsTeam", () => {
     expect(mentionsTeam("Atlanta Hawks beat the Thunder", "seahawks")).toBe(false);
     expect(mentionsTeam("Atlanta Hawks beat the Thunder", "supersonics")).toBe(false);
     expect(mentionsTeam("Walker Buehler signs with Boston", "seahawks")).toBe(false);
-    expect(mentionsTeam("Kenneth Walker runs for 120 yards", "seahawks")).toBe(true);
+    expect(mentionsTeam("Sam Darnold throws for 300 yards", "seahawks")).toBe(true);
+    expect(mentionsTeam("Kenneth Walker runs wild for the Chiefs", "seahawks")).toBe(false);
   });
 
   it("does not match keywords inside longer words", () => {

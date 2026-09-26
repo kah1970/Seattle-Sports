@@ -1,3 +1,5 @@
+import { existsSync } from "fs";
+import path from "path";
 import { prisma } from "@/lib/db";
 import { TEAMS, TeamSlug, TEAM_API_IDS, RESEARCH_LINKS } from "@/lib/config";
 import { computeRankScore } from "@/lib/ranking";
@@ -120,7 +122,7 @@ export default async function TeamPage({
     : poolNugget;
 
   const serialized = {
-    teamConfig,
+    teamConfig: withAvailablePhotos(teamConfig),
     articles: articles.map((a) => ({
       ...a,
       publishedAt: a.publishedAt.toISOString(),
@@ -150,4 +152,22 @@ export default async function TeamPage({
   };
 
   return <TeamPageClient data={serialized} />;
+}
+
+const PHOTO_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
+
+/**
+ * Championship photos are listed in config without an extension; keep the
+ * ones that exist in /public (with whichever extension was used), so the
+ * banner falls back to its artwork until real photos are added.
+ */
+function withAvailablePhotos(config: (typeof TEAMS)[TeamSlug]) {
+  if (!("championship" in config)) return config;
+  const found = config.championship.photos.flatMap((p) => {
+    const ext = PHOTO_EXTENSIONS.find((e) =>
+      existsSync(path.join(process.cwd(), "public", p.src + e))
+    );
+    return ext ? [{ ...p, src: p.src + ext }] : [];
+  });
+  return { ...config, championship: { ...config.championship, photos: found } };
 }

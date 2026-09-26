@@ -179,7 +179,6 @@ const PLAYER_PATTERNS = [
   "jaxon smith-njigba",
   "jsn",
   "devon witherspoon",
-  "kenneth walker",
   "cooper kupp",
   "rashid shaheed",
   "ernest jones",
