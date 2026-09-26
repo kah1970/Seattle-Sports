@@ -45,6 +45,19 @@ async function main() {
     },
   });
 
+  await prisma.team.upsert({
+    where: { slug: "cougars" },
+    update: {},
+    create: {
+      name: "WSU Cougars",
+      slug: "cougars",
+      sport: "NCAA",
+      city: "Pullman",
+      colorPrimary: "#981E32",
+      colorSecondary: "#5E6A71",
+    },
+  });
+
   // Create sources
   const sources = [
     { name: "ESPN MLB", slug: "espn-mlb", type: "rss", reputation: 85 },
@@ -361,7 +374,7 @@ async function main() {
   }
 
   console.log("Seed complete!");
-  console.log(`  Teams: 3`);
+  console.log(`  Teams: 4`);
   console.log(`  Sources: ${sources.length}`);
   console.log(`  Sample articles: ${includeSamples ? sampleArticles.length : 0}`);
   console.log(`  Sample games: ${includeSamples ? games.length : 0}`);
